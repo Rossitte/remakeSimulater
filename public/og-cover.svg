@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b0f1a"/>
+      <stop offset="50%" stop-color="#121a33"/>
+      <stop offset="100%" stop-color="#0a0a0f"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="30%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="#d4b25e" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="#a855f7" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="50%" stop-color="#d4b25e"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="cardGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b8860b"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+    <linearGradient id="cardPurple" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="cardRed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" />
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#orb)"/>
+
+  <!-- 星尘 -->
+  <g fill="#fff" opacity="0.35">
+    <circle cx="100" cy="90" r="1.4"/>
+    <circle cx="180" cy="220" r="1"/>
+    <circle cx="260" cy="60" r="1.6"/>
+    <circle cx="380" cy="170" r="1"/>
+    <circle cx="480" cy="110" r="1.4"/>
+    <circle cx="620" cy="80" r="1"/>
+    <circle cx="720" cy="220" r="1.5"/>
+    <circle cx="860" cy="140" r="1"/>
+    <circle cx="980" cy="80" r="1.6"/>
+    <circle cx="1080" cy="220" r="1"/>
+    <circle cx="1150" cy="400" r="1.4"/>
+    <circle cx="60" cy="480" r="1"/>
+    <circle cx="220" cy="540" r="1.5"/>
+    <circle cx="520" cy="560" r="1"/>
+    <circle cx="760" cy="520" r="1.4"/>
+  </g>
+
+  <!-- 钻石 Logo（左上） -->
+  <g transform="translate(70, 66)">
+    <rect width="48" height="48" rx="11" fill="#0a0a0f" stroke="#d4b25e" stroke-width="2"/>
+    <path d="M24 8 L40 24 L24 40 L8 24 Z" fill="#d4b25e"/>
+    <circle cx="24" cy="24" r="4.5" fill="#0a0a0f"/>
+  </g>
+
+  <!-- 标题区 -->
+  <g transform="translate(70, 220)">
+    <text x="0" y="0"
+          font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif"
+          font-size="30" fill="#94a3b8" letter-spacing="10">LIFE · REINCARNATION · SIMULATOR</text>
+    <text x="0" y="90"
+          font-family="'STKaiti', 'KaiTi', 'Songti SC', serif"
+          font-size="112" font-weight="700" fill="url(#titleGrad)" letter-spacing="18"
+          style="text-shadow: 0 6px 24px rgba(212,178,94,0.25);">投胎模拟器</text>
+    <text x="0" y="148"
+          font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif"
+          font-size="28" fill="#cbd5e1" letter-spacing="2">
+      “你无法选择出生，但可以决定怎么活。”
+    </text>
+    <g transform="translate(0, 186)">
+      <rect x="0" y="0" width="520" height="54" rx="27" fill="rgba(168,85,247,0.14)" stroke="rgba(168,85,247,0.5)" stroke-width="1"/>
+      <text x="28" y="35"
+            font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif"
+            font-size="22" fill="#c4b5fd" letter-spacing="1.5">
+        🌍  50+ 国家 · 🎴 36 张命运卡 · 🏆 60+ 成就
+      </text>
+    </g>
+  </g>
+
+  <!-- 三张命运卡（右侧） -->
+  <g transform="translate(760, 130)">
+    <!-- 紫卡（最后） -->
+    <g transform="translate(-18, 38) rotate(-10)">
+      <rect width="180" height="250" rx="18" fill="url(#cardPurple)" stroke="#c4b5fd" stroke-width="2"/>
+      <text x="90" y="70" text-anchor="middle" font-size="54">🌙</text>
+      <text x="90" y="110" text-anchor="middle" font-size="22" fill="#f5f3ff" font-weight="700"
+            font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">天生丽质</text>
+      <text x="22" y="150" font-size="14" fill="#ddd6fe" opacity="0.95"
+            font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">颜值从不过低，</text>
+      <text x="22" y="172" font-size="14" fill="#ddd6fe" opacity="0.95"
+            font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">魅力天然出众。</text>
+      <text x="90" y="220" text-anchor="middle" font-size="12" fill="#c4b5fd" letter-spacing="3">RARE</text>
+    </g>
+
+    <!-- 红卡（中） -->
+    <g transform="translate(52, 20) rotate(2)">
+      <rect width="180" height="250" rx="18" fill="url(#cardRed)" stroke="#fca5a5" stroke-width="2"/>
+      <text x="90" y="70" text-anchor="middle" font-size="54">🩸</text>
+      <text x="90" y="110" text-anchor="middle" font-size="22" fill="#fef2f2" font-weight="700"
+            font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">战乱之地</text>
+      <text x="22" y="150" font-size="14" fill="#fecaca" opacity="0.95"
+            font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">出生在叙利亚，</text>
+      <text x="22" y="172" font-size="14" fill="#fecaca" opacity="0.95"
+            font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">危险就在身边。</text>
+      <text x="90" y="220" text-anchor="middle" font-size="12" fill="#fecaca" letter-spacing="3">BLACK</text>
+    </g>
+
+    <!-- 金卡（前） -->
+    <g transform="translate(116, 0) rotate(9)">
+      <rect width="180" height="250" rx="18" fill="url(#cardGold)" stroke="#fcd34d" stroke-width="2"/>
+      <text x="90" y="70" text-anchor="middle" font-size="54">👑</text>
+      <text x="90" y="110" text-anchor="middle" font-size="22" fill="#fef3c7" font-weight="700"
+            font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">超级富二代</text>
+      <text x="22" y="150" font-size="14" fill="#fde68a" opacity="0.95"
+            font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">出身「超级富裕」</text>
+      <text x="22" y="172" font-size="14" fill="#fde68a" opacity="0.95"
+            font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">人生 Easy 模式。</text>
+      <text x="90" y="220" text-anchor="middle" font-size="12" fill="#fcd34d" letter-spacing="3">LEGEND</text>
+    </g>
+  </g>
+
+  <!-- 底部 -->
+  <g transform="translate(70, 560)">
+    <text x="0" y="0"
+          font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif"
+          font-size="20" fill="#64748b" letter-spacing="1.5">
+      来测测你的下一世 · 如果再投胎一次，你会拥有怎样的一生？
+    </text>
+  </g>
+</svg>

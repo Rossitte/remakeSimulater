@@ -1,0 +1,150 @@
+:root {
+  --bg: #0a0a0f;
+  --bg-soft: #101018;
+  --card: #15151f;
+  --card-hi: #1b1b28;
+  --border: rgba(255, 255, 255, 0.07);
+  --text: #e8e6e0;
+  --text-dim: #9794a3;
+  --gold: #d4b25e;
+  --gold-bright: #f0d488;
+  --radius: 14px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: radial-gradient(1200px 800px at 50% -10%, #171728 0%, var(--bg) 60%);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+.card {
+  background: linear-gradient(180deg, var(--card-hi), var(--card));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* ===================== 移动端专项：窄屏（≤680px） ===================== */
+@media (max-width: 680px) {
+  .app {
+    padding: 24px 14px 100px;
+    /* iPhone 底部 Home Indicator / 顶部刘海安全区 */
+    padding-top: calc(24px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+    padding-left:  calc(14px + env(safe-area-inset-left, 0px));
+    padding-right: calc(14px + env(safe-area-inset-right, 0px));
+  }
+  .card {
+    padding: 18px 16px;
+    border-radius: 14px;
+  }
+  .btn-primary {
+    padding: 13px 32px;
+    font-size: 17px;
+    letter-spacing: 5px;
+    min-height: 48px;          /* 触摸目标 ≥ 44 */
+    width: 100%;                /* 主按钮占满整行，不容易误触 */
+  }
+  .btn-ghost {
+    padding: 10px 16px;
+    font-size: 14px;
+    min-height: 42px;
+  }
+}
+
+@media (max-width: 420px) {
+  .app {
+    padding-left:  calc(12px + env(safe-area-inset-left, 0px));
+    padding-right: calc(12px + env(safe-area-inset-right, 0px));
+  }
+}
+
+.title-serif {
+  font-family: Georgia, 'Songti SC', 'SimSun', serif;
+}
+
+.gold {
+  color: var(--gold);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.5s ease both;
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(212, 178, 94, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 24px 6px rgba(212, 178, 94, 0.18);
+  }
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 14px 44px;
+  font-size: 18px;
+  letter-spacing: 6px;
+  color: #171208;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  animation: pulseGlow 2.6s ease-in-out infinite;
+  transition: transform 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  padding: 10px 22px;
+  font-size: 14px;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-ghost:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.2);
+}

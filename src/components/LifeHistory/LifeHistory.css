@@ -1,0 +1,131 @@
+.history {
+  text-align: left;
+}
+
+.history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.history-title {
+  font-size: 18px;
+  letter-spacing: 4px;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-link:hover {
+  color: var(--gold);
+}
+
+.history-empty {
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.8;
+  text-align: center;
+  padding: 12px 0;
+}
+
+.history-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.history-item:hover {
+  background: rgba(212, 178, 94, 0.06);
+  border-color: rgba(212, 178, 94, 0.3);
+}
+
+.history-index {
+  font-size: 13px;
+  color: var(--gold);
+  font-weight: 600;
+  min-width: 62px;
+}
+
+.history-place {
+  font-size: 14px;
+  flex: 1;
+}
+
+.history-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.history-age {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.history-score {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ============= 移动端适配（历史人生列表） ============= */
+@media (max-width: 520px) {
+  .history-title {
+    font-size: 16px;
+    letter-spacing: 3px;
+  }
+  .history-item {
+    padding: 11px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+    /* 窄屏：允许 index 在上方一行，剩余空间 meta 不挤 */
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    min-height: 56px;           /* 触摸目标高度 */
+    -webkit-tap-highlight-color: transparent;
+  }
+  .history-index {
+    font-size: 12px;
+    min-width: 52px;
+  }
+  .history-place {
+    font-size: 13.5px;
+    line-height: 1.35;
+    order: 1;                   /* 放到第二行，独占整宽方便阅读 */
+    flex: 1 1 100%;
+    margin-top: 2px;
+  }
+  .history-meta {
+    order: 0;
+    margin-left: auto;          /* 右对齐第一行右侧 */
+    gap: 8px;
+  }
+  .history-age { font-size: 12px; }
+  .history-score { font-size: 13.5px; }
+}
+

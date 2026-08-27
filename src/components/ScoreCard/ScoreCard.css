@@ -1,0 +1,74 @@
+.score {
+  text-align: center;
+  margin-bottom: 18px;
+  padding: 26px;
+  background: linear-gradient(180deg, rgba(212, 178, 94, 0.1), transparent),
+    linear-gradient(180deg, var(--card-hi), var(--card));
+}
+
+.score-title {
+  font-size: 13px;
+  letter-spacing: 6px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.score-num {
+  font-size: 72px;
+  line-height: 1;
+  font-weight: 800;
+  text-shadow: 0 0 40px rgba(212, 178, 94, 0.4);
+}
+
+.score-stars {
+  margin: 10px 0 8px;
+  font-size: 22px;
+  letter-spacing: 6px;
+}
+
+.score-star {
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.score-star.on {
+  color: var(--gold-bright);
+}
+
+.score-label {
+  display: inline-block;
+  padding: 4px 18px;
+  border: 1px solid rgba(212, 178, 94, 0.4);
+  border-radius: 999px;
+  color: var(--gold-bright);
+  font-size: 14px;
+  letter-spacing: 4px;
+}
+
+/* ========= 移动端：评分卡字号下调，按钮占满整行 ========= */
+@media (max-width: 640px) {
+  .score {
+    padding: 20px 14px;
+  }
+  .score-title {
+    font-size: 12px;
+    letter-spacing: 5px;
+  }
+  .score-num {
+    font-size: 56px;
+  }
+  .score-stars {
+    font-size: 18px;
+    letter-spacing: 4px;
+  }
+  .score-label {
+    padding: 4px 14px;
+    font-size: 12.5px;
+    letter-spacing: 3px;
+  }
+}
+@media (max-width: 400px) {
+  .score-num {
+    font-size: 48px;
+  }
+}

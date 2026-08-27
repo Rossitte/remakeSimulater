@@ -1,0 +1,269 @@
+.home {
+  text-align: center;
+  position: relative;
+  padding-top: 40px;
+}
+
+.home-orb {
+  position: fixed;
+  top: -160px;
+  left: 50%;
+  width: 480px;
+  height: 480px;
+  max-width: 100vw;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(212, 178, 94, 0.1), transparent 65%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.home-title {
+  font-size: 44px;
+  letter-spacing: 12px;
+  color: var(--gold-bright);
+  text-shadow: 0 0 40px rgba(212, 178, 94, 0.35);
+}
+
+.home-subtitle {
+  margin: 14px 0 36px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  font-size: 15px;
+}
+
+.home-start {
+  margin-bottom: 36px;
+}
+
+.home-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+  padding: 20px;
+}
+.home-stats-relative {
+  position: relative;
+}
+
+/* ---------- 彩蛋按钮：放在 home-stats 卡片的右下方 ---------- */
+.cheat-stats-entry-wrap {
+  position: absolute;
+  right: 12px;
+  bottom: -10px;
+  z-index: 5;
+}
+.cheat-stats-entry {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid #334155;
+  color: #64748b;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+  box-shadow: 0 6px 18px -4px rgba(0,0,0,0.55), 0 0 0 1px rgba(148,163,184,0.08) inset;
+  animation: cheat-stats-pulse 7s ease-in-out infinite;
+}
+@keyframes cheat-stats-pulse {
+  0%, 92%, 100% { transform: scale(1);   color: #64748b; box-shadow: 0 6px 18px -4px rgba(0,0,0,0.55); }
+  94%, 98%       { transform: scale(1.1); color: #a855f7; box-shadow: 0 8px 26px -2px rgba(168,85,247,0.55); }
+}
+.cheat-stats-entry:hover {
+  color: #a855f7;
+  border-color: #a855f7;
+  transform: scale(1.12);
+  box-shadow: 0 8px 26px -2px rgba(168, 85, 247, 0.55);
+  animation: none;
+}
+.cheat-stats-entry.enabled {
+  color: #22c55e;
+  border-color: #16a34a;
+  background: rgba(20, 83, 45, 0.85);
+  box-shadow: 0 0 0 1px rgba(34,197,94,0.6) inset, 0 8px 22px -4px rgba(34,197,94,0.55);
+  animation: cheat-stats-enabled 2.4s ease-in-out infinite;
+}
+@keyframes cheat-stats-enabled {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+
+/* Tooltip「多点我几次试试？」 */
+.cheat-stats-tip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: -14px;
+  white-space: nowrap;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #1e1b4b, #312e81);
+  color: #f5f3ff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px -6px rgba(124, 58, 237, 0.6), 0 0 0 1px rgba(168,85,247,0.35);
+  pointer-events: none;
+  animation: cheat-tip-pop 0.22s ease-out;
+}
+.cheat-stats-tip-arrow {
+  position: absolute;
+  bottom: -6px;
+  right: 24px;
+  width: 12px;
+  height: 12px;
+  background: #312e81;
+  transform: rotate(45deg);
+  box-shadow: 1px 1px 0 0 rgba(168,85,247,0.35);
+}
+@keyframes cheat-tip-pop {
+  0%   { opacity: 0; transform: translateY(6px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---------------- Tabs 切换 ---------------- */
+.home-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 14px 0;
+  justify-content: center;
+}
+
+.home-tab {
+  position: relative;
+  padding: 10px 18px;
+  border-radius: 12px 12px 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+.home-tab:hover {
+  color: #e2e8f0;
+  background: #0f172a;
+}
+.home-tab.active {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+.home-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.45);
+}
+
+.home-stat-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.home-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+@media (max-width: 680px) {
+  .home {
+    padding-top: 24px;
+  }
+  .home-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 16px 14px 22px;  /* 底部留出彩蛋按钮右下伸出的空间 */
+  }
+  .home-title {
+    font-size: 32px;
+    letter-spacing: 8px;
+  }
+  .home-subtitle {
+    margin: 10px 0 28px;
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+  .home-start {
+    margin-bottom: 30px;
+  }
+  .home-tabs {
+    gap: 4px;
+  }
+  .home-tab {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .home-stat-label {
+    font-size: 11px;
+    margin-bottom: 4px;
+    /* 窄屏 label 允许换行，不再要求一行不换 */
+    white-space: normal;
+    line-height: 1.3;
+    word-break: break-all;
+  }
+  .home-stat-value {
+    font-size: 17px;
+  }
+  /* Tooltip 在手机上改成从左对齐不超出屏幕 */
+  .cheat-stats-tip {
+    right: 0;
+    transform: none;
+    white-space: normal;
+    max-width: 240px;
+    line-height: 1.5;
+  }
+  .cheat-stats-tip-arrow {
+    right: 20px;
+  }
+}
+
+@media (max-width: 460px) {
+  .home-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .home-title {
+    font-size: 28px;
+    letter-spacing: 6px;
+  }
+  /* 彩蛋入口在 2 列 home-stats 里稍微往上挪一点，避免贴底被遮 */
+  .cheat-stats-entry-wrap {
+    bottom: -14px;
+    right: 8px;
+  }
+  .cheat-stats-entry {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .home-title {
+    font-size: 24px;
+    letter-spacing: 5px;
+  }
+  .home-subtitle {
+    font-size: 12px;
+    letter-spacing: 1.6px;
+  }
+}

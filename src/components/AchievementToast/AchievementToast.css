@@ -1,0 +1,3 @@
+/* AchievementToast 样式 — 核心样式在 AchievementWall.css 中，
+   这里单独拆文件是为了组件加载路径清晰。
+   样式实际统一由 AchievementWall.css 提供（结构一致，避免重复）。 */

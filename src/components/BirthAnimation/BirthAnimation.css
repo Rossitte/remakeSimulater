@@ -1,0 +1,389 @@
+.birth {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.birth-rolling {
+  text-align: center;
+}
+
+.birth-flag {
+  font-size: 96px;
+  line-height: 1.2;
+}
+
+.birth-name {
+  font-size: 26px;
+  letter-spacing: 6px;
+  color: var(--text);
+  margin: 14px 0 10px;
+}
+
+.birth-hint {
+  color: var(--text-dim);
+  font-size: 13px;
+  letter-spacing: 2px;
+}
+
+.birth-reveal {
+  text-align: center;
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ========== 缩放定位视觉 ========== */
+
+.zoom {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  margin: 0 auto 10px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 32%, #17203a 0%, #0b101d 70%);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.55);
+}
+
+/* SVG 填满整个圆形容器 */
+.zoom-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 核心：地图 <g> 的变换（由 requestAnimationFrame 驱动，无需 CSS transition） */
+.zoom-map-group {
+  transform-box: view-box;
+}
+
+/* 经纬网格 */
+.zoom-graticule {
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 1;
+}
+
+/* 大陆轮廓 */
+.zoom-continent {
+  fill: rgba(212, 178, 94, 0.12);
+  stroke: rgba(212, 178, 94, 0.38);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+/* 国家标记点 */
+.zoom-marker {
+  fill: rgba(255, 255, 255, 0.4);
+}
+
+.zoom-marker.target {
+  fill: var(--gold-bright);
+}
+
+/* 目标国家脉冲光环（内圈） */
+.zoom-marker-halo {
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: haloPulse 1.6s ease-out infinite;
+}
+
+/* 目标国家脉冲光环（外圈，更大更淡） */
+.zoom-marker-halo-outer {
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 1;
+  opacity: 0.4;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: haloPulse 1.6s ease-out infinite 0.3s;
+}
+
+@keyframes haloPulse {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.5);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+/* 国家级瞄准框 */
+.zoom-reticle-box {
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 2;
+  stroke-dasharray: 8 4;
+  opacity: 0.7;
+  animation: reticleSpin 12s linear infinite;
+}
+
+.zoom-reticle-tick {
+  stroke: var(--gold-bright);
+  stroke-width: 2;
+  opacity: 0.8;
+}
+
+@keyframes reticleSpin {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 48;
+  }
+}
+
+/* 地区级高亮圆环 */
+.zoom-region-ring {
+  fill: rgba(212, 178, 94, 0.06);
+  stroke: var(--gold-bright);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+  opacity: 0.8;
+}
+
+/* 城市级十字准星 */
+.zoom-crosshair-line {
+  stroke: var(--gold-bright);
+  stroke-width: 2;
+  opacity: 0.9;
+}
+
+.zoom-crosshair-ring {
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 2.5;
+  opacity: 1;
+}
+
+/* ========== 雷达窗口装饰 ========== */
+
+.zoom-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(212, 178, 94, 0.35);
+  transition: all 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.zoom-ring-1 {
+  width: 224px;
+  height: 224px;
+}
+
+.zoom-ring-2 {
+  width: 148px;
+  height: 148px;
+  border-style: dashed;
+}
+
+.zoom-ring-3 {
+  width: 72px;
+  height: 72px;
+}
+
+/* 中心点 */
+.zoom-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%) scale(0);
+  background: var(--gold-bright);
+  border-radius: 50%;
+  box-shadow: 0 0 14px 4px rgba(212, 178, 94, 0.5);
+  opacity: 0;
+  transition: all 0.4s ease;
+  pointer-events: none;
+}
+
+/* 暗角效果 */
+.zoom-vignette {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: inset 0 0 30px 10px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+/* ========== 各阶段状态 ========== */
+
+/* 国家级 */
+.zoom.is-country .zoom-ring-1 {
+  opacity: 1;
+}
+.zoom.is-country .zoom-ring-2 {
+  opacity: 0.45;
+}
+.zoom.is-country .zoom-ring-3 {
+  opacity: 0.25;
+}
+
+/* 地区级 */
+.zoom.is-region .zoom-ring-1 {
+  width: 168px;
+  height: 168px;
+  opacity: 0.22;
+}
+.zoom.is-region .zoom-ring-2 {
+  width: 120px;
+  height: 120px;
+  opacity: 1;
+  border-color: var(--gold-bright);
+}
+.zoom.is-region .zoom-ring-3 {
+  width: 60px;
+  height: 60px;
+  opacity: 0.4;
+}
+
+/* 城市级 */
+.zoom.is-city .zoom-ring-1 {
+  opacity: 0;
+}
+.zoom.is-city .zoom-ring-2 {
+  width: 92px;
+  height: 92px;
+  opacity: 0.35;
+}
+.zoom.is-city .zoom-ring-3 {
+  width: 46px;
+  height: 46px;
+  opacity: 1;
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 20px rgba(212, 178, 94, 0.35);
+}
+.zoom.is-city .zoom-dot {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ========== 导航路径 ========== */
+
+.zoom-path {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+
+.zoom-path span.on {
+  color: var(--gold-bright);
+  font-weight: 600;
+}
+
+.zoom-path-sep {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* 当前层级内容 */
+.zoom-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.zoom-line-icon {
+  font-size: 28px;
+}
+
+.zoom-line-scope {
+  font-size: 12px;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 10px;
+  letter-spacing: 2px;
+}
+
+.zoom-line-text {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ========== 出生信息揭示 ========== */
+
+.birth-line {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.birth-line-icon {
+  font-size: 30px;
+}
+
+.birth-line-text {
+  color: var(--text);
+}
+
+.birth-born {
+  font-size: 40px;
+  letter-spacing: 14px;
+  margin-top: 18px;
+  animation: fadeUp 0.6s ease both;
+  text-shadow: 0 0 40px rgba(212, 178, 94, 0.4);
+}
+
+/* ========== 响应式 ========== */
+
+@media (max-width: 480px) {
+  .birth-reveal {
+    min-height: 400px;
+  }
+
+  .zoom {
+    transform: scale(0.82);
+  }
+
+  .zoom-line {
+    font-size: 19px;
+  }
+
+  .birth-line {
+    font-size: 19px;
+  }
+}
+
+/* 降低动态偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .zoom-ring,
+  .zoom-dot,
+  .zoom-marker-halo,
+  .zoom-marker-halo-outer,
+  .zoom-reticle-box {
+    animation: none;
+  }
+}

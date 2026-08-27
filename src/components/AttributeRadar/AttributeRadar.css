@@ -1,0 +1,156 @@
+/* ==========================================================
+   AttributeRadar 雷达图样式
+   ========================================================== */
+.attribute-radar {
+  display: block;
+  margin: 0 auto;
+  position: relative;
+  animation: radar-in 0.5s ease-out;
+}
+
+@keyframes radar-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.radar-svg {
+  overflow: visible;
+}
+
+/* ---------- 背景分圈 ---------- */
+.radar-grid-level {
+  fill: none;
+  stroke: #1e293b;
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.radar-grid-level.outer {
+  stroke: #334155;
+  stroke-dasharray: none;
+  stroke-width: 1.3;
+  fill: rgba(15, 23, 42, 0.4);
+}
+
+/* ---------- 轴骨架 ---------- */
+.radar-axis-line {
+  stroke: #334155;
+  stroke-width: 1;
+  stroke-opacity: 0.8;
+}
+
+/* ---------- 系列区域 ---------- */
+.radar-fill {
+  stroke-width: 0;
+  animation: radar-fill-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.radar-stroke {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  animation: radar-stroke-in 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.radar-dot {
+  stroke-width: 1.5;
+  animation: radar-dot-pop 1.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: center;
+}
+.radar-center {
+  fill: #475569;
+}
+
+@keyframes radar-fill-in {
+  from { opacity: 0; }
+  30%  { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes radar-stroke-in {
+  0%   { stroke-dasharray: 0 3000; opacity: 0; }
+  40%  { opacity: 1; }
+  100% { stroke-dasharray: 3000 0; opacity: 1; }
+}
+@keyframes radar-dot-pop {
+  0%   { transform: scale(0); r: 1; }
+  60%  { transform: scale(0); r: 1; }
+  90%  { transform: scale(1.4); }
+  100% { transform: scale(1); r: 3.2; }
+}
+
+/* ---------- 轴标签 ---------- */
+.radar-axis-label {
+  fill: #cbd5e1;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  user-select: none;
+}
+.radar-axis-value {
+  fill: #fcd34d;
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* 手机：缩小轴文字和 legend，避免两边文字被截断 */
+@media (max-width: 560px) {
+  .radar-axis-label {
+    font-size: 11.5px;
+  }
+  .radar-axis-value {
+    font-size: 10px;
+  }
+  .radar-legend-item {
+    font-size: 12px;
+  }
+  .result-radar-wrap .radar-title {
+    font-size: 12.5px;
+    letter-spacing: 0.6px;
+  }
+}
+
+/* ---------- 双系列对比的 legend ---------- */
+.radar-legend {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.radar-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+.radar-legend-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1.5px solid;
+}
+
+/* 结果页内使用：雷达图卡片整体 */
+.result-radar-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 8px;
+}
+.result-radar-wrap .radar-title {
+  font-size: 14px;
+  color: #94a3b8;
+  letter-spacing: 1px;
+  margin: 2px 0 0 0;
+  text-align: center;
+}
+@media (min-width: 600px) {
+  .result-radar-dual {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+}
