@@ -40,7 +40,10 @@ function pickCountry(effect: CheatEffect, preferredCountryId?: string): Country 
   // 优先级：effect.forceCountryId（卡片） >  preferredCountryId（用户在面板选的） > 正常加权
   const forced = effect.forceCountryId ?? preferredCountryId;
   if (forced) {
-    const direct = COUNTRIES.find((c) => c.id === forced);
+        // 注意：CHEAT_CARDS 里 forceCountryId 写成了大写 ISO 代码（KR/UA/GB…），而 COUNTRIES.id 全部是小写（kr/ua/gb…）
+    // 这里统一按「忽略大小写 + trim」匹配，避免任何一方的书写风格不一致导致作弊失效
+    const key = forced.trim().toLowerCase();
+    const direct = COUNTRIES.find((c) => c.id.trim().toLowerCase() === key);
     if (direct) return direct;
   }
   return weightedRandom(

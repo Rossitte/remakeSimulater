@@ -440,8 +440,11 @@ function EffectSummary({ effect }: { effect: ReturnType<typeof mergeEffects> }) 
   if (effect.luckDelta) push('运气偏移:', (effect.luckDelta > 0 ? '+' : '') + effect.luckDelta);
   if (effect.parentJobWealthDelta) push('父母职业阶层:', (effect.parentJobWealthDelta > 0 ? '+' : '') + effect.parentJobWealthDelta);
   if (effect.familyStabilityDelta) push('家庭稳定性:', (effect.familyStabilityDelta > 0 ? '+' : '') + effect.familyStabilityDelta);
-  if (effect.forceCountryId) push('强制国家:', effect.forceCountryId);
-  if (effect.forceGender) push('强制性别:', effect.forceGender);
+  if (effect.forceCountryId) {
+    const rawId: string = effect.forceCountryId;
+    const matched = COUNTRIES.find((c) => c.id.trim().toLowerCase() === rawId.trim().toLowerCase());
+    push('强制国家:', matched ? `${matched.flag} ${matched.name}` : rawId);
+  }  if (effect.forceGender) push('强制性别:', effect.forceGender);
   if (effect.birthYearMin !== undefined || effect.birthYearMax !== undefined) {
     push('出生年份范围:', `${effect.birthYearMin ?? '不限'} ~ ${effect.birthYearMax ?? '不限'}`);
   }
