@@ -1,4 +1,5 @@
-# 《投胎模拟器》 remakesimulator.online
+# 《投胎模拟器》 
+<remakesimulator.online>
 
 你现在是一名资深前端工程师、游戏系统设计师和数据架构师。
 
