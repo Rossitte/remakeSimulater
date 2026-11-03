@@ -1,0 +1,114 @@
+.hero {
+  position: relative;
+  margin-bottom: 18px;
+  padding: 18px 20px 20px;
+  text-align: center;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: radial-gradient(120% 90% at 50% 0%, #1c1c2b 0%, var(--card) 60%);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  animation: fadeUp 0.5s ease both;
+}
+
+/* 稀有度越高，外框越亮 */
+.hero-ssr {
+  border-color: rgba(240, 212, 136, 0.55);
+  box-shadow: 0 14px 44px rgba(212, 178, 94, 0.22), inset 0 0 60px rgba(240, 212, 136, 0.08);
+}
+
+.hero-sr {
+  border-color: rgba(196, 181, 253, 0.45);
+  box-shadow: 0 14px 40px rgba(139, 92, 246, 0.18);
+}
+
+.hero-r {
+  border-color: rgba(125, 211, 252, 0.32);
+}
+
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.hero-rarity {
+  padding: 3px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  border: 1px solid;
+  border-radius: 999px;
+}
+
+.hero-chance {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.hero-score {
+  font-family: Georgia, 'Songti SC', 'SimSun', serif;
+  font-size: 92px;
+  line-height: 1.05;
+  font-weight: 700;
+  color: var(--gold-bright);
+}
+
+.hero-label {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 3px 14px;
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--text);
+  border: 1px solid;
+  border-radius: 999px;
+}
+
+.hero-title {
+  margin-top: 12px;
+  font-size: 19px;
+  line-height: 1.4;
+  color: var(--gold-bright);
+}
+
+.hero-meta {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+
+.hero-percentile {
+  margin-top: 14px;
+}
+
+.hero-bar {
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.hero-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.8s ease;
+}
+
+.hero-percentile-text {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 16px 16px 18px;
+  }
+  .hero-score {
+    font-size: 76px;
+  }
+  .hero-title {
+    font-size: 17px;
+  }
+}

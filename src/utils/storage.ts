@@ -2,6 +2,7 @@ import type { LifeRecord } from '../models/LifeRecord';
 
 const STORAGE_KEY = 'reincarnation-simulator.lives';
 const ACHIEVEMENT_KEY = 'reincarnation-simulator.achievements.v1';
+const CODEX_KEY = 'reincarnation-simulator.codex.v1';
 const MAX_LIVES = 300;
 
 export function loadLives(): LifeRecord[] {
@@ -57,6 +58,27 @@ export function saveAchievements(ids: string[]): void {
 export function clearAchievements(): void {
   try {
     localStorage.removeItem(ACHIEVEMENT_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+// ---------- 终章图鉴解锁记录 ----------
+
+export function loadCodex(): string[] {
+  try {
+    const raw = localStorage.getItem(CODEX_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as string[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveCodex(ids: string[]): void {
+  try {
+    localStorage.setItem(CODEX_KEY, JSON.stringify(Array.from(new Set(ids))));
   } catch {
     // ignore
   }

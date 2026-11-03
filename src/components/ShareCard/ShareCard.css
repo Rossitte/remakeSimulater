@@ -1,0 +1,173 @@
+/* 人生卡弹层。注意：Chrome 61 不支持 flex `gap`，间距一律用 margin。 */
+
+.share-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.share-backdrop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(4, 4, 8, 0.82);
+}
+
+.share-sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 440px;
+  max-height: 92vh;
+  background: linear-gradient(180deg, var(--card-hi), var(--card));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+.share-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+}
+
+.share-title {
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+}
+
+.share-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.share-close:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.share-preview {
+  flex: 1;
+  min-height: 0;
+  padding: 0 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.share-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  /* 3:4 竖版卡在弹层里必须整张可见，否则底部会被裁掉一截 */
+  max-height: 62vh;
+  margin: 0 auto;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+.share-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  padding: 24px;
+  font-size: 14px;
+  color: var(--text-dim);
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+}
+
+.share-message {
+  margin: 12px 16px 0;
+  padding: 9px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gold-bright);
+  background: rgba(212, 178, 94, 0.10);
+  border: 1px solid rgba(212, 178, 94, 0.28);
+  border-radius: 10px;
+}
+
+.share-hint {
+  margin: 12px 16px 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.share-actions {
+  display: flex;
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
+
+.share-btn {
+  flex: 1;
+  min-height: 46px;
+  font-size: 15px;
+  font-family: inherit;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.share-btn:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.share-btn-primary {
+  margin-right: 10px;
+  color: #171208;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border: none;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+}
+
+.share-btn-ghost {
+  color: var(--text);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+/* 窄屏：改成底部抽屉，双手持机时更好点 */
+@media (max-width: 680px) {
+  .share-mask {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .share-sheet {
+    max-width: none;
+    max-height: 94vh;
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+  }
+
+  .share-preview {
+    padding: 0 14px;
+  }
+}

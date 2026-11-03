@@ -2,6 +2,15 @@ import type { BirthInfo } from '../models/BirthInfo';
 import type { Person } from '../models/Person';
 import type { LifeEvent } from '../models/LifeResult';
 import { chance, clamp, gaussian, randomInt } from '../utils/random';
+import {
+  ACCIDENT_DEATHS,
+  CRIME_DEATHS,
+  DISASTER_DEATHS,
+  TRAFFIC_DEATHS,
+  WAR_DEATHS,
+  ILLNESS_DEATHS,
+} from '../data/deathCauses';
+import { pickDeathCause } from './deathEngine';
 
 export interface HealthResult {
   age: number;
@@ -11,13 +20,7 @@ export interface HealthResult {
   events: LifeEvent[];
 }
 
-const ILLNESSES = ['癌症', '心脏病', '中风', '严重肺炎', '肝硬化', '肾病'];
 
-const WAR_DEATHS = ['炮弹袭击', '枪战死', '空袭遇难', '地雷爆炸', '武装冲突', '化学武器', '围困饿死', '人质遇难'];
-const TRAFFIC_DEATHS = ['车祸身亡', '交通事故', '酒驾事故', '摩托车事故', '行人被撞', '大巴翻车'];
-const ACCIDENT_DEATHS = ['意外坠楼', '溺水事故', '火灾遇难', '触电身亡', '雪崩掩埋', '建筑物倒塌', '窒息身亡', '中毒身亡', '高处坠落', '工业事故'];
-const DISASTER_DEATHS = ['地震遇难', '海啸吞没', '火山喷发', '泥石流掩埋', '飓风袭击', '龙卷风', '洪水淹没'];
-const CRIME_DEATHS = ['凶杀案', '抢劫遇害', '绑架撕票', '恐怖袭击', '帮派火并'];
 
 /** 根据年龄获取战争死亡基础概率系数 */
 function warAgeFactor(age: number): number {
@@ -102,13 +105,13 @@ export function simulateHealth(birth: BirthInfo, person: Person, _retireAge: num
       const warPeakBonus = warLevel > 60 ? 1.5 : 1.0;
 
       if (chance(yearlyRate * warPeakBonus)) {
-        const cause = WAR_DEATHS[randomInt(0, WAR_DEATHS.length - 1)];
+        const cause = pickDeathCause(WAR_DEATHS, y, birth.gender);
 
         const warEvents: LifeEvent[] = [{
           age: y,
           type: 'accident',
-          title: '战乱遇难',
-          description: `在战乱中，你的生命被${cause}夺走。`,
+          title: cause.title,
+          description: cause.description,
         }];
 
         // 如果年龄较大，可能先有长期战乱经历
@@ -124,7 +127,7 @@ export function simulateHealth(birth: BirthInfo, person: Person, _retireAge: num
         return {
           age: y,
           lifespanDays: y * 365 + randomInt(0, 364),
-          deathCause: cause,
+          deathCause: cause.cause,
           deathType: 'war',
           events: warEvents,
         };
@@ -138,15 +141,15 @@ export function simulateHealth(birth: BirthInfo, person: Person, _retireAge: num
     for (let y = 10; y < age; y++) {
       if (chance(crimeRate * (y >= 18 && y <= 55 ? 1.5 : 0.5))) {
         if (chance(0.7)) {
-          const cause = CRIME_DEATHS[randomInt(0, CRIME_DEATHS.length - 1)];
+          const cause = pickDeathCause(CRIME_DEATHS, y, birth.gender);
           age = y;
           deathType = 'crime';
-          deathCause = cause;
+          deathCause = cause.cause;
           events.push({
             age: y,
             type: 'accident',
-            title: '遭遇不测',
-            description: `你不幸成为了${cause}的受害者。`,
+            title: cause.title,
+            description: cause.description,
           });
           break;
         } else {
@@ -172,7 +175,7 @@ export function simulateHealth(birth: BirthInfo, person: Person, _retireAge: num
     }
 
     if (illAge > 0) {
-      const illness = ILLNESSES[randomInt(0, ILLNESSES.length - 1)];
+      const illness = ILLNESS_DEATHS[randomInt(0, ILLNESS_DEATHS.length - 1)];
       events.push({
         age: illAge,
         type: 'health',
@@ -206,15 +209,15 @@ export function simulateHealth(birth: BirthInfo, person: Person, _retireAge: num
       const ageRisk = y >= 16 && y <= 40 ? 1.8 : 0.6;
       if (chance(trafficRate * ageRisk)) {
         if (chance(0.35)) {
-          const cause = TRAFFIC_DEATHS[randomInt(0, TRAFFIC_DEATHS.length - 1)];
+          const cause = pickDeathCause(TRAFFIC_DEATHS, y, birth.gender);
           age = y;
           deathType = 'accident';
-          deathCause = cause;
+          deathCause = cause.cause;
           events.push({
             age: y,
             type: 'accident',
-            title: '车祸遇难',
-            description: `一场${cause}夺走了你的生命。`,
+            title: cause.title,
+            description: cause.description,
           });
           break;
         } else {
@@ -242,15 +245,15 @@ export function simulateHealth(birth: BirthInfo, person: Person, _retireAge: num
 
       if (chance(accidentRate * ageRisk)) {
         if (chance(0.3)) {
-          const cause = ACCIDENT_DEATHS[randomInt(0, ACCIDENT_DEATHS.length - 1)];
+          const cause = pickDeathCause(ACCIDENT_DEATHS, y, birth.gender);
           age = y;
           deathType = 'accident';
-          deathCause = cause;
+          deathCause = cause.cause;
           events.push({
             age: y,
             type: 'accident',
-            title: '意外离世',
-            description: `一场${cause}夺走了你的生命。`,
+            title: cause.title,
+            description: cause.description,
           });
           break;
         } else {
@@ -269,16 +272,16 @@ export function simulateHealth(birth: BirthInfo, person: Person, _retireAge: num
     // 3. 自然灾害死亡（概率较低，但可能发生）
     const disasterRate = 1 / 15000;
     if (chance(disasterRate)) {
-      const cause = DISASTER_DEATHS[randomInt(0, DISASTER_DEATHS.length - 1)];
       const disasterAge = randomInt(5, Math.max(10, age - 5));
+      const cause = pickDeathCause(DISASTER_DEATHS, disasterAge, birth.gender);
       age = disasterAge;
       deathType = 'disaster';
-      deathCause = cause;
+      deathCause = cause.cause;
       events.push({
         age: disasterAge,
         type: 'accident',
-        title: '天灾降临',
-        description: `一场${cause}夺走了你的生命。`,
+        title: cause.title,
+        description: cause.description,
       });
     }
   }

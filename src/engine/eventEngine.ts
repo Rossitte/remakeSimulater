@@ -64,6 +64,30 @@ export interface WealthEventResult {
   delta: number;
 }
 
+/** 扩充财富事件的金额规则：按资产比例，或按「千美元」区间 */
+interface WealthEffect {
+  mode: 'assetPct' | 'fixed';
+  min: number;
+  max: number;
+  /** fixed 模式下的金额单位（美元） */
+  unit?: number;
+}
+
+const EXTRA_WEALTH_EFFECTS: Record<string, WealthEffect> = {
+  livestream_sell: { mode: 'fixed', min: 20, max: 200, unit: 1000 },
+  open_shop_online: { mode: 'fixed', min: 5, max: 40, unit: 1000 },
+  street_stall: { mode: 'fixed', min: 2, max: 20, unit: 1000 },
+  stock_wipeout: { mode: 'assetPct', min: -0.7, max: -0.3 },
+  pyramid_scam: { mode: 'assetPct', min: -0.6, max: -0.2 },
+  telecom_fraud: { mode: 'assetPct', min: -0.8, max: -0.2 },
+  unfinished_house: { mode: 'assetPct', min: -0.4, max: -0.1 },
+  small_business_boom: { mode: 'assetPct', min: 0.1, max: 0.5 },
+  borrow_for_medical: { mode: 'assetPct', min: -0.3, max: -0.05 },
+  pay_off_debt: { mode: 'assetPct', min: 0.05, max: 0.2 },
+  gift_from_parents: { mode: 'fixed', min: 10, max: 80, unit: 1000 },
+  second_job: { mode: 'fixed', min: 3, max: 25, unit: 1000 },
+};
+
 /** 采样财富类随机事件 */
 export function sampleWealthEvent(age: number, birth: BirthInfo, assets: number): WealthEventResult | null {
   if (!chance(0.05)) return null;
@@ -162,7 +186,14 @@ export function sampleWealthEvent(age: number, birth: BirthInfo, assets: number)
       const delta = -Math.min(assets * randomFloat(0.1, 0.4), randomInt(5, 30) * 1000);
       return { event: { age, type: t.type, title: t.title, description: t.description }, delta };
     }
-    default:
-      return null;
+    default: {
+      const effect = EXTRA_WEALTH_EFFECTS[t.id];
+      if (!effect) return null;
+      const delta =
+        effect.mode === 'assetPct'
+          ? assets * randomFloat(effect.min, effect.max)
+          : randomInt(effect.min, effect.max) * (effect.unit || 1000) * famFactor;
+      return { event: { age, type: t.type, title: t.title, description: t.description }, delta };
+    }
   }
 }

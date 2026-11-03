@@ -98,10 +98,14 @@
 
 .result-actions {
   display: flex;
-  gap: 14px;
   justify-content: center;
   margin-top: 8px;
   flex-wrap: wrap;
+}
+
+/* 用 margin 而不是 flex gap：Chrome 61（Android 8.1 WebView）不支持 gap */
+.result-actions > * + * {
+  margin-left: 14px;
 }
 
 /* ============ 移动端适配（窄屏） ============ */
@@ -160,7 +164,10 @@
   .result-actions {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+  }
+  .result-actions > * + * {
+    margin-left: 0;
+    margin-top: 10px;
   }
   .result-actions .btn-primary,
   .result-actions .btn-ghost {

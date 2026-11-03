@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import './AttributeRadar.css';
 
 export interface RadarAxis {
@@ -194,19 +194,23 @@ export default function AttributeRadar({
               style={{ stroke: sp.series.color }}
             />
           ))}
-          {/* 顶点圆点 */}
-          {seriesPolygons.flatMap((sp, idx) =>
-            sp.dots.map((d, di) => (
-              <circle
-                key={`dot-${idx}-${di}`}
-                cx={d.x}
-                cy={d.y}
-                r={3.2}
-                className="radar-dot"
-                style={{ fill: sp.series.color, stroke: '#0B1220' }}
-              />
-            )),
-          )}
+          {/* 顶点圆点：用 reduce 展开而不是 flatMap —— flatMap 需要 Chrome 69，
+              小工具最低基线是 Android 8.1 的 WebView 61，直接调用会报错导致整页崩掉 */}
+          {seriesPolygons.reduce<ReactNode[]>((dots, sp, idx) => {
+            sp.dots.forEach((d, di) => {
+              dots.push(
+                <circle
+                  key={`dot-${idx}-${di}`}
+                  cx={d.x}
+                  cy={d.y}
+                  r={3.2}
+                  className="radar-dot"
+                  style={{ fill: sp.series.color, stroke: '#0B1220' }}
+                />,
+              );
+            });
+            return dots;
+          }, [])}
         </g>
 
         {/* 中心参考点 */}

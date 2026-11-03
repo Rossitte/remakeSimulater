@@ -7,9 +7,12 @@ import {
   loadAchievements,
   saveAchievements,
   clearAchievements as clearStorageAchievements,
+  loadCodex,
+  saveCodex,
 } from '../utils/storage';
 import { formatLifespan } from '../utils/format';
 import type { AchievementDef } from '../data/achievements';
+import { DEATH_CODEX } from '../data/deathCodex';
 import {
   checkAchievements,
   backfillAggregateAchievements,
@@ -30,9 +33,17 @@ export interface AchievementStats {
   byRarity: { common: number; rare: number; epic: number; legendary: number };
 }
 
+export interface CodexStats {
+  total: number;
+  unlocked: number;
+}
+
 export interface GameStore {
   lives: LifeRecord[];
   stats: GameStats;
+  // 终章图鉴
+  unlockedCodex: Set<string>;
+  codexStats: CodexStats;
   // 成就
   unlockedAchievementIds: Set<string>;
   achievementStats: AchievementStats;
@@ -51,6 +62,7 @@ export function useGameStore(): GameStore {
   const [lives, setLives] = useState<LifeRecord[]>(() => loadLives());
   const [unlockedIds, setUnlockedIds] = useState<Set<string>>(() => new Set(loadAchievements()));
   const [pendingUnlocks, setPendingUnlocks] = useState<AchievementDef[]>([]);
+  const [codexIds, setCodexIds] = useState<Set<string>>(() => new Set(loadCodex()));
 
   // 首次挂载：补跑累计型成就（以防存档升级 / 成就池扩充时遗留未解锁）
   useEffect(() => {
@@ -63,6 +75,21 @@ export function useGameStore(): GameStore {
       saveAchievements(Array.from(allUnlockedIds));
     }
     // 首次补漏不弹 Toast，避免老用户一进页面被刷屏
+
+    // 老存档里的死因补录进图鉴
+    const merged = new Set(loadCodex());
+    let changed = false;
+    for (const rec of all) {
+      const cause = rec.lifeResult && rec.lifeResult.deathCause;
+      if (cause && !merged.has(cause)) {
+        merged.add(cause);
+        changed = true;
+      }
+    }
+    if (changed) {
+      saveCodex(Array.from(merged));
+      setCodexIds(merged);
+    }
   }, []);
 
   const dismissPendingUnlocks = useCallback(() => setPendingUnlocks([]), []);
@@ -73,6 +100,18 @@ export function useGameStore(): GameStore {
       saveLives(nextLives);
 
       // 基于当前最新存档 + 最新 record 跑成就判定
+      // 解锁终章图鉴里的这一条
+      const cause = record.lifeResult.deathCause;
+      if (cause) {
+        setCodexIds((prev) => {
+          if (prev.has(cause)) return prev;
+          const next = new Set(prev);
+          next.add(cause);
+          saveCodex(Array.from(next));
+          return next;
+        });
+      }
+
       setUnlockedIds((prevIds) => {
         const { newlyUnlocked, allUnlockedIds } = checkAchievements(record, nextLives, prevIds);
         // 写回存档
@@ -124,9 +163,20 @@ export function useGameStore(): GameStore {
     [unlockedIds],
   );
 
+  const codexStats = useMemo<CodexStats>(() => {
+    // 只统计图鉴里存在的死因，避免历史数据里的脏值把进度算超
+    let unlocked = 0;
+    for (const entry of DEATH_CODEX) {
+      if (codexIds.has(entry.id)) unlocked++;
+    }
+    return { total: DEATH_CODEX.length, unlocked };
+  }, [codexIds]);
+
   return {
     lives,
     stats,
+    unlockedCodex: codexIds,
+    codexStats,
     unlockedAchievementIds: unlockedIds,
     achievementStats,
     pendingUnlocks,

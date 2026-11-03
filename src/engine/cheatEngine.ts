@@ -1,5 +1,6 @@
 import {
   CHEAT_CARDS,
+  CARD_RARITY_META,
   type CheatCardDef,
   type CheatEffect,
   type CardRarity,
@@ -21,24 +22,47 @@ export const DEFAULT_CHEAT_OPTIONS: CheatOptions = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  工具：按「每个稀有度档位独立权重」抽取 3 张不重复的卡片
-    算法说明（满足「每张卡相对独立 + 不重复」的诉求）：
-    1. 先计算每个 rarity 的相对出现概率（好卡档与坏卡档平衡）
-    2. 抽取第 1 张时，在全卡池（带稀有度权重）里按权重随机
-    3. 从候选池中移除该 id，权重归一后再抽第 2 张，同样再抽第 3 张
-    → 这样每张被抽到时的概率相对独立且不会重复
+/*  抽卡概率模型
+  关键：这里定义的是「每个稀有度档位的整体概率」，不是单卡权重。
+  因为各档卡片数量不同（红 10 / 金 22 / 蓝 32 / 黑 40），
+  如果直接拿一个数字当「单卡权重」，档位概率就会被卡数放大：
+  旧版 black=50 权重 × 40 张卡 ≈ 63.9% 坏卡，与注释里写的 1:1 完全不符。
+  正确做法见 buildCardWeights：先把档位概率摊到该档的每张卡上。
+  改这里即可调手感，四档合计必须为 100。
    ------------------------------------------------------------------ */
-
-/** 各稀有度的基础出卡权重（红色少，蓝色多，坏卡档黑与好卡档总权重对齐） */
-const RARITY_WEIGHTS: Record<CardRarity, number> = {
-  red: 3,
-  gold: 14,
-  blue: 33,
-  black: 50, // 3+14+33 = 50，与黑相同 → 好/坏 出卡 1:1
+export const RARITY_TIER_PERCENT: Record<CardRarity, number> = {
+  red: 6,    // 绝世好牌
+  gold: 20,  // 上上签
+  blue: 56,  // 小确幸
+  black: 18, // 厄运缠身（档位比例 好:坏 = 82:18；每包最多 1 张坏卡，实际坏卡槽位约 15%）
 };
 
-function cardPickWeight(card: CheatCardDef): number {
-  return (card.weight ?? 1) * RARITY_WEIGHTS[card.rarity];
+/** 每包（一次抽 3 张）最多允许出现的坏卡张数：避免「3 张全黑」式的整包废掉 */
+export const MAX_BAD_PER_PACK = 1;
+
+export function isBadCard(card: CheatCardDef): boolean {
+  return CARD_RARITY_META[card.rarity].category === 'bad';
+}
+
+/**
+ * 把「档位概率」摊到卡池里的每张卡上：
+ *   单卡权重 = 档位概率 × 单卡 weight ÷ 该档在本池中的 weight 之和
+ * 好处：无论某档新增/删除多少张卡，整档出卡概率都稳定等于 RARITY_TIER_PERCENT，
+ * 加卡只改变「同档里谁能被抽到 / 单卡稀有度」（weight: 0.6 的卡依然更难出）。
+ * 权重按「当前候选池」重算，所以勾选国家后剔除国家卡也不会让档位概率漂移。
+ */
+function buildCardWeights(pool: CheatCardDef[]): Map<string, number> {
+  const sumByRarity: Record<CardRarity, number> = { red: 0, gold: 0, blue: 0, black: 0 };
+  for (const c of pool) sumByRarity[c.rarity] += c.weight ?? 1;
+  const out = new Map<string, number>();
+  for (const c of pool) {
+    const sum = sumByRarity[c.rarity];
+    out.set(
+      c.id,
+      sum > 0 ? (RARITY_TIER_PERCENT[c.rarity] * (c.weight ?? 1)) / sum : 0,
+    );
+  }
+  return out;
 }
 
 function pickWeighted<T>(items: T[], weightFn: (t: T) => number): T | null {
@@ -58,20 +82,31 @@ export interface DrawOptions {
   excludeCountryCards?: boolean;
   /** 额外要排除的卡片 id */
   excludeIds?: Iterable<string>;
+  /** 每包最多几张坏卡，默认 MAX_BAD_PER_PACK（1） */
+  maxBadPerPack?: number;
 }
 
+/** 抽一包：3 张互不重复的卡，坏卡张数受 maxBadPerPack 限制 */
 export function drawThreeUniqueCards(opts: DrawOptions = {}): CheatCardDef[] {
+  const maxBad = Math.max(0, Math.floor(opts.maxBadPerPack ?? MAX_BAD_PER_PACK));
   const excludeIdSet = new Set<string>(opts.excludeIds ?? []);
   const pool = CHEAT_CARDS.filter((c) => {
     if (excludeIdSet.has(c.id)) return false;
     if (opts.excludeCountryCards && c.effect.forceCountryId) return false;
     return true;
   });
+  const weights = buildCardWeights(pool);
   const remaining = [...pool];
   const picked: CheatCardDef[] = [];
+  let badPicked = 0;
+
   for (let i = 0; i < 3 && remaining.length > 0; i++) {
-    const card = pickWeighted(remaining, cardPickWeight);
+    // 坏卡额度用完后，后续槽位只在好卡里抽
+    const candidates = badPicked >= maxBad ? remaining.filter((c) => !isBadCard(c)) : remaining;
+    if (candidates.length === 0) break;
+    const card = pickWeighted(candidates, (c) => weights.get(c.id) ?? 0);
     if (!card) break;
+    if (isBadCard(card)) badPicked += 1;
     picked.push(card);
     const idx = remaining.indexOf(card);
     if (idx >= 0) remaining.splice(idx, 1);

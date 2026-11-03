@@ -4,3 +4,6 @@ dist-ssr
 *.local
 .DS_Store
 npm-debug.log*
+
+# 本地验收截图 / 浏览器临时目录
+.screenshots/

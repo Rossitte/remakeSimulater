@@ -518,6 +518,18 @@ export const COUNTRIES: Country[] = [
     ],
   },
   {
+    id: 'sy', name: '叙利亚', nameEn: 'Syria', flag: '🇸🇾',
+    population: 2300, birthRate: 22.0, economicLevel: 25, educationLevel: 42,
+    healthcareLevel: 38, safetyLevel: 22, lifeExpectancy: 72, currency: 'SYP', currencyRate: 13000,
+    warLevel: 85,
+    cities: [
+      { name: '大马士革', population: 230, region: '大马士革省' },
+      { name: '阿勒颇', population: 200, region: '阿勒颇省' },
+      { name: '霍姆斯', population: 90, region: '霍姆斯省' },
+      { name: '拉塔基亚', population: 55, region: '拉塔基亚省' },
+    ],
+  },
+  {
     id: 'pl', name: '波兰', nameEn: 'Poland', flag: '🇵🇱',
     population: 3800, birthRate: 9.8, economicLevel: 70, educationLevel: 80,
     healthcareLevel: 75, safetyLevel: 75, lifeExpectancy: 78, currency: 'zł', currencyRate: 4.0,

@@ -2,6 +2,8 @@
   text-align: center;
   position: relative;
   padding-top: 40px;
+  /* 为底部悬浮作弊胶囊留出空间，避免遮挡内容 */
+  padding-bottom: 96px;
 }
 
 .home-orb {
@@ -46,59 +48,81 @@
   position: relative;
 }
 
-/* ---------- 彩蛋按钮：放在 home-stats 卡片的右下方 ---------- */
-.cheat-stats-entry-wrap {
-  position: absolute;
-  right: 12px;
-  bottom: -10px;
-  z-index: 5;
+/* ---------- 作弊入口：底部悬浮胶囊 ---------- */
+.cheat-fab-wrap {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 50;
 }
-.cheat-stats-entry {
-  position: relative;
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.92);
-  border: 1px solid #334155;
-  color: #64748b;
-  font-size: 14px;
-  display: flex;
+.cheat-fab {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 178, 94, 0.55);
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.95), rgba(49, 46, 129, 0.95));
+  color: #f5f3ff;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.18s ease;
   user-select: none;
-  box-shadow: 0 6px 18px -4px rgba(0,0,0,0.55), 0 0 0 1px rgba(148,163,184,0.08) inset;
-  animation: cheat-stats-pulse 7s ease-in-out infinite;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow:
+    0 8px 28px -6px rgba(124, 58, 237, 0.6),
+    0 0 0 1px rgba(168, 85, 247, 0.25) inset,
+    0 0 18px rgba(212, 178, 94, 0.25);
+  animation: cheat-fab-glow 2.6s ease-in-out infinite;
 }
-@keyframes cheat-stats-pulse {
-  0%, 92%, 100% { transform: scale(1);   color: #64748b; box-shadow: 0 6px 18px -4px rgba(0,0,0,0.55); }
-  94%, 98%       { transform: scale(1.1); color: #a855f7; box-shadow: 0 8px 26px -2px rgba(168,85,247,0.55); }
+.cheat-fab-icon {
+  font-size: 18px;
+  line-height: 1;
 }
-.cheat-stats-entry:hover {
-  color: #a855f7;
-  border-color: #a855f7;
-  transform: scale(1.12);
-  box-shadow: 0 8px 26px -2px rgba(168, 85, 247, 0.55);
-  animation: none;
+.cheat-fab:hover {
+  /* 居中交给外层 .cheat-fab-wrap 的 translateX(-50%)，按钮自身只缩放 */
+  transform: scale(1.05);
+  box-shadow:
+    0 12px 36px -6px rgba(124, 58, 237, 0.75),
+    0 0 0 1px rgba(168, 85, 247, 0.4) inset,
+    0 0 26px rgba(212, 178, 94, 0.45);
 }
-.cheat-stats-entry.enabled {
-  color: #22c55e;
-  border-color: #16a34a;
-  background: rgba(20, 83, 45, 0.85);
-  box-shadow: 0 0 0 1px rgba(34,197,94,0.6) inset, 0 8px 22px -4px rgba(34,197,94,0.55);
-  animation: cheat-stats-enabled 2.4s ease-in-out infinite;
+@keyframes cheat-fab-glow {
+  0%, 100% {
+    box-shadow:
+      0 8px 28px -6px rgba(124, 58, 237, 0.6),
+      0 0 0 1px rgba(168, 85, 247, 0.25) inset,
+      0 0 18px rgba(212, 178, 94, 0.25);
+  }
+  50% {
+    box-shadow:
+      0 10px 32px -4px rgba(124, 58, 237, 0.8),
+      0 0 0 1px rgba(168, 85, 247, 0.4) inset,
+      0 0 28px rgba(212, 178, 94, 0.5);
+  }
 }
-@keyframes cheat-stats-enabled {
+.cheat-fab.enabled {
+  border-color: rgba(34, 197, 94, 0.6);
+  background: linear-gradient(135deg, rgba(20, 83, 45, 0.95), rgba(6, 78, 59, 0.95));
+  box-shadow:
+    0 8px 28px -6px rgba(34, 197, 94, 0.55),
+    0 0 0 1px rgba(34, 197, 94, 0.4) inset,
+    0 0 18px rgba(34, 197, 94, 0.3);
+  animation: cheat-fab-enabled 2.4s ease-in-out infinite;
+}
+@keyframes cheat-fab-enabled {
   0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.08); }
+  50%      { transform: scale(1.04); }
 }
 
-/* Tooltip「多点我几次试试？」 */
-.cheat-stats-tip {
+/* Tooltip「连点 3 次打开作弊控制台」 */
+.cheat-fab-tip {
   position: absolute;
   bottom: calc(100% + 10px);
-  right: -14px;
+  left: 50%;
+  transform: translateX(-50%);
   white-space: nowrap;
   padding: 6px 12px;
   background: linear-gradient(135deg, #1e1b4b, #312e81);
@@ -111,43 +135,49 @@
   pointer-events: none;
   animation: cheat-tip-pop 0.22s ease-out;
 }
-.cheat-stats-tip-arrow {
+.cheat-fab-tip-arrow {
   position: absolute;
   bottom: -6px;
-  right: 24px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
   width: 12px;
   height: 12px;
   background: #312e81;
-  transform: rotate(45deg);
   box-shadow: 1px 1px 0 0 rgba(168,85,247,0.35);
 }
 @keyframes cheat-tip-pop {
-  0%   { opacity: 0; transform: translateY(6px) scale(0.95); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  0%   { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.95); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
 }
 
 /* ---------------- Tabs 切换 ---------------- */
 .home-tabs {
   display: flex;
-  gap: 6px;
   margin: 0 0 14px 0;
   justify-content: center;
 }
 
+/* 三个 tab 平分宽度；用 margin 而不是 gap，Chrome 61 不支持 flex gap */
+.home-tab + .home-tab {
+  margin-left: 6px;
+}
+
 .home-tab {
   position: relative;
-  padding: 10px 18px;
+  flex: 1 1 0;
+  justify-content: center;
+  padding: 10px 10px;
   border-radius: 12px 12px 0 0;
   border: 1px solid transparent;
   border-bottom: none;
   background: transparent;
   color: #94a3b8;
-  font-size: 14px;
+  font-size: 13.5px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 .home-tab:hover {
   color: #e2e8f0;
@@ -165,6 +195,7 @@
   justify-content: center;
   min-width: 20px;
   height: 20px;
+  margin-left: 5px;
   padding: 0 6px;
   border-radius: 999px;
   font-size: 11px;
@@ -192,7 +223,7 @@
   .home-stats {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    padding: 16px 14px 22px;  /* 底部留出彩蛋按钮右下伸出的空间 */
+    padding: 16px 14px;
   }
   .home-title {
     font-size: 32px;
@@ -206,12 +237,13 @@
   .home-start {
     margin-bottom: 30px;
   }
-  .home-tabs {
-    gap: 4px;
-  }
   .home-tab {
-    padding: 10px 12px;
-    font-size: 13px;
+    padding: 10px 4px;
+    font-size: 12.5px;
+    letter-spacing: -0.2px;
+  }
+  .home-tab + .home-tab {
+    margin-left: 4px;
   }
   .home-stat-label {
     font-size: 11px;
@@ -224,16 +256,11 @@
   .home-stat-value {
     font-size: 17px;
   }
-  /* Tooltip 在手机上改成从左对齐不超出屏幕 */
-  .cheat-stats-tip {
-    right: 0;
-    transform: none;
+  /* Tooltip 在手机上居中，不超出屏幕 */
+  .cheat-fab-tip {
     white-space: normal;
-    max-width: 240px;
+    max-width: 80vw;
     line-height: 1.5;
-  }
-  .cheat-stats-tip-arrow {
-    right: 20px;
   }
 }
 
@@ -245,15 +272,9 @@
     font-size: 28px;
     letter-spacing: 6px;
   }
-  /* 彩蛋入口在 2 列 home-stats 里稍微往上挪一点，避免贴底被遮 */
-  .cheat-stats-entry-wrap {
-    bottom: -14px;
-    right: 8px;
-  }
-  .cheat-stats-entry {
-    width: 40px;
-    height: 40px;
-    font-size: 16px;
+  .cheat-fab {
+    padding: 10px 20px;
+    font-size: 14px;
   }
 }
 

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import type { GameStats, AchievementStats } from '../../store/gameStore';
+import type { GameStats, AchievementStats, CodexStats } from '../../store/gameStore';
+import CodexWall from '../CodexWall/CodexWall';
 import type { LifeRecord } from '../../models/LifeRecord';
 import type { CheatOptions } from '../../engine/cheatEngine';
 import LifeHistory from '../LifeHistory/LifeHistory';
@@ -13,6 +14,8 @@ interface Props {
   stats: GameStats;
   achievementStats: AchievementStats;
   unlockedAchievementIds: Set<string>;
+  codexStats: CodexStats;
+  unlockedCodex: Set<string>;
   cheat: CheatOptions;
   onStart: () => void;
   onSelect: (rec: LifeRecord) => void;
@@ -24,13 +27,15 @@ interface Props {
   onClearCards: () => void;
 }
 
-type Tab = 'history' | 'achievements';
+type Tab = 'history' | 'achievements' | 'codex';
 
 export default function HomePage({
   lives,
   stats,
   achievementStats,
   unlockedAchievementIds,
+  codexStats,
+  unlockedCodex,
   cheat,
   onStart,
   onSelect,
@@ -95,29 +100,7 @@ export default function HomePage({
         }}
       />
 
-      <div className="card home-stats home-stats-relative">
-        {/* 彩蛋入口：放在 home-stats 卡片的右下方 */}
-        <div className="cheat-stats-entry-wrap">
-          <button
-            className={`cheat-stats-entry ${cheat.cheatMode ? 'enabled' : ''}`}
-            onClick={() => {
-              showTipBriefly();
-              handleStatsTap();
-            }}
-            onMouseEnter={() => setTipVisible(true)}
-            onMouseLeave={() => setTipVisible(false)}
-            aria-label="作弊控制台入口"
-          >
-            {cheat.cheatMode ? '🎩' : '✱'}
-          </button>
-          {tipVisible && (
-            <div className="cheat-stats-tip" role="tooltip">
-              多点我几次试试？
-              <span className="cheat-stats-tip-arrow" />
-            </div>
-          )}
-        </div>
-
+      <div className="card home-stats">
         <Stat label="已经投胎" value={`${stats.count} 次`} />
         <Stat label="最高人生评分" value={stats.count > 0 ? `${stats.bestScore}` : '—'} />
         <Stat label="最短人生" value={stats.shortestLabel} />
@@ -144,17 +127,51 @@ export default function HomePage({
             <span className="home-tab-badge">{achievementStats.unlocked}</span>
           )}
         </button>
+        <button
+          className={`home-tab ${tab === 'codex' ? 'active' : ''}`}
+          onClick={() => setTab('codex')}
+        >
+          🕯️ 终章图鉴
+          {codexStats.unlocked > 0 && (
+            <span className="home-tab-badge">{codexStats.unlocked}</span>
+          )}
+        </button>
       </div>
 
-      {tab === 'history' ? (
-        <LifeHistory lives={lives} onSelect={onSelect} onClear={onClear} />
-      ) : (
+      {tab === 'history' && <LifeHistory lives={lives} onSelect={onSelect} onClear={onClear} />}
+      {tab === 'achievements' && (
         <AchievementWall
           unlockedIds={unlockedAchievementIds}
           stats={achievementStats}
           onRequestReset={onResetAchievements}
         />
       )}
+      {tab === 'codex' && <CodexWall unlocked={unlockedCodex} stats={codexStats} />}
+
+      {/* 作弊入口：底部悬浮胶囊，连点 3 次打开 */}
+      <div className="cheat-fab-wrap">
+        <button
+          className={`cheat-fab ${cheat.cheatMode ? 'enabled' : ''}`}
+          onClick={() => {
+            showTipBriefly();
+            handleStatsTap();
+          }}
+          onMouseEnter={() => setTipVisible(true)}
+          onMouseLeave={() => setTipVisible(false)}
+          aria-label="作弊控制台入口"
+        >
+          <span className="cheat-fab-icon">{cheat.cheatMode ? '🎩' : '🎲'}</span>
+          <span className="cheat-fab-text">
+            {cheat.cheatMode ? '作弊已开启' : '作弊改命'}
+          </span>
+        </button>
+        {tipVisible && (
+          <div className="cheat-fab-tip" role="tooltip">
+            连点 3 次打开作弊控制台
+            <span className="cheat-fab-tip-arrow" />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

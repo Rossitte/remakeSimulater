@@ -5,7 +5,13 @@ import {
   CHEAT_CARD_BY_ID,
   type CheatCardDef,
 } from '../../data/cheatCards';
-import { drawThreeUniqueCards, mergeEffects, type CheatOptions } from '../../engine/cheatEngine';
+import {
+  MAX_BAD_PER_PACK,
+  RARITY_TIER_PERCENT,
+  drawThreeUniqueCards,
+  mergeEffects,
+  type CheatOptions,
+} from '../../engine/cheatEngine';
 import './CheatConsole.css';
 
 interface Props {
@@ -155,7 +161,7 @@ export default function CheatConsole({
       if (!hasOtherEffect) {
         out[i] = {
           state: 'overridden',
-          reason: `强制国家效果被「${finalCountryCardName}」( ${finalCountry.toUpperCase()} ) 覆盖，本卡整体失效`,
+          reason: `强制国家效果被「${finalCountryCardName}」(${countryLabel(finalCountry)}) 覆盖，本卡整体失效`,
         };
       } else {
         out[i] = {
@@ -296,6 +302,11 @@ export default function CheatConsole({
               <div className="cheat-hint">
                 共 <strong>{MAX_DRAWS}</strong> 次抽卡机会，剩余 <strong className="gold">{drawsLeft}</strong> 次。
                 每次 3 张，<strong>必须一起打包带走</strong>，不满意只能重抽。
+              </div>
+              <div className="cheat-hint">
+                出卡概率：红 {RARITY_TIER_PERCENT.red}% · 金 {RARITY_TIER_PERCENT.gold}% ·
+                蓝 {RARITY_TIER_PERCENT.blue}% · 黑 {RARITY_TIER_PERCENT.black}%，
+                每包最多 {MAX_BAD_PER_PACK} 张坏卡。
               </div>
             </div>
             <button
@@ -441,10 +452,10 @@ function EffectSummary({ effect }: { effect: ReturnType<typeof mergeEffects> }) 
   if (effect.parentJobWealthDelta) push('父母职业阶层:', (effect.parentJobWealthDelta > 0 ? '+' : '') + effect.parentJobWealthDelta);
   if (effect.familyStabilityDelta) push('家庭稳定性:', (effect.familyStabilityDelta > 0 ? '+' : '') + effect.familyStabilityDelta);
   if (effect.forceCountryId) {
-    const rawId: string = effect.forceCountryId;
-    const matched = COUNTRIES.find((c) => c.id.trim().toLowerCase() === rawId.trim().toLowerCase());
-    push('强制国家:', matched ? `${matched.flag} ${matched.name}` : rawId);
-  }  if (effect.forceGender) push('强制性别:', effect.forceGender);
+    const target = COUNTRIES.find((c) => c.id.toLowerCase() === effect.forceCountryId!.toLowerCase());
+    push('强制国家:', target ? `${target.flag} ${target.name}` : effect.forceCountryId);
+  }
+  if (effect.forceGender) push('强制性别:', effect.forceGender);
   if (effect.birthYearMin !== undefined || effect.birthYearMax !== undefined) {
     push('出生年份范围:', `${effect.birthYearMin ?? '不限'} ~ ${effect.birthYearMax ?? '不限'}`);
   }
@@ -489,4 +500,10 @@ function attrLabel(k: string): string {
       luck: '运气', education: '教育', socialConnection: '人缘',
     } as Record<string, string>
   )[k] ?? k;
+}
+
+/** 国家 id → 「🇸🇬 新加坡」，找不到时退回大写 id */
+function countryLabel(id: string): string {
+  const c = COUNTRIES.find((x) => x.id.toLowerCase() === id.toLowerCase());
+  return c ? `${c.flag} ${c.name}` : id.toUpperCase();
 }

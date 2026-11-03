@@ -1,10 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { LifeRecord } from '../../models/LifeRecord';
 import type { AchievementDef } from '../../data/achievements';
-import ScoreCard from '../ScoreCard/ScoreCard';
+import ShareCard from '../ShareCard/ShareCard';
+import LifeHeroCard from '../LifeHeroCard/LifeHeroCard';
 import AchievementToast from '../AchievementToast/AchievementToast';
 import AttributeRadar, { type RadarAxis, type RadarSeries } from '../AttributeRadar/AttributeRadar';
-import { formatLifespan, formatMoney, formatUSD } from '../../utils/format';
+import { formatMoney, formatUSD } from '../../utils/format';
 import '../AttributeRadar/AttributeRadar.css';
 import './LifeResult.css';
 
@@ -27,6 +28,7 @@ export default function LifeResult({
   const b = record.birthInfo;
   const c = b.country;
   const p = record.person;
+  const [shareOpen, setShareOpen] = useState(false);
 
   // ---------- 雷达图：最终结果 vs 出生（6 维） ----------
   const finalAxes = useMemo<RadarAxis[]>(() => {
@@ -108,10 +110,7 @@ export default function LifeResult({
       {achievementUnlocks.length > 0 && onDismissAchievements && (
         <AchievementToast unlocks={achievementUnlocks} onDismissAll={onDismissAchievements} />
       )}
-      <h1 className="result-head title-serif">你的一生</h1>
-      <p className="result-age">
-        享年 <span className="gold">{formatLifespan(r.age, r.lifespanDays)}</span>
-      </p>
+      <LifeHeroCard record={record} />
 
       <div className="card result-card">
         <h2 className="result-card-title">出生报告</h2>
@@ -174,21 +173,24 @@ export default function LifeResult({
         </div>
       )}
 
-      <ScoreCard score={record.score} label={record.label} />
-
       <div className="card result-card">
         <h2 className="result-card-title">人生评价</h2>
         <p className="result-eval">{record.evaluation}</p>
       </div>
 
       <div className="result-actions">
-        <button className="btn-primary" onClick={onAgain}>
+        <button className="btn-primary" onClick={() => setShareOpen(true)}>
+          生成人生卡
+        </button>
+        <button className="btn-ghost" onClick={onAgain}>
           再次投胎
         </button>
         <button className="btn-ghost" onClick={onHome}>
           返回首页
         </button>
       </div>
+
+      {shareOpen && <ShareCard record={record} onClose={() => setShareOpen(false)} />}
     </div>
   );
 }

@@ -22,6 +22,8 @@ export default function App() {
     clearHistory,
     achievementStats,
     unlockedAchievementIds,
+    codexStats,
+    unlockedCodex,
     pendingUnlocks,
     dismissPendingUnlocks,
     clearAllAchievements,
@@ -107,6 +109,8 @@ export default function App() {
         stats={stats}
         achievementStats={achievementStats}
         unlockedAchievementIds={unlockedAchievementIds}
+        codexStats={codexStats}
+        unlockedCodex={unlockedCodex}
         cheat={cheat}
         onStart={startReincarnation}
         onSelect={handleView}

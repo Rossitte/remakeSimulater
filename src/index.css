@@ -99,7 +99,9 @@ body {
 }
 
 .fade-up {
-  animation: fadeUp 0.5s ease both;
+  /* 用 backwards 而不是 both：both 会让动画结束后仍保留 transform，
+     导致页面里的 position: fixed 弹层（人生卡、作弊控制台）相对整页而不是视口定位 */
+  animation: fadeUp 0.5s ease backwards;
 }
 
 @keyframes pulseGlow {

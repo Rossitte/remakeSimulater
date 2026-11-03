@@ -1,4 +1,11 @@
 import type { LifeEventType } from '../models/LifeResult';
+import {
+  EXTRA_CHILDHOOD_EVENTS,
+  EXTRA_TEEN_EVENTS,
+  EXTRA_ADULT_EVENTS,
+  EXTRA_ELDER_EVENTS,
+  EXTRA_WEALTH_EVENTS,
+} from './eventsExtra';
 
 export interface EventTemplate {
   id: string;
@@ -185,9 +192,13 @@ export const ELDER_EVENTS: EventTemplate[] = [
 /** 社交 / 生活类随机事件（兼容原有接口） */
 export const SOCIAL_EVENTS: EventTemplate[] = [
   ...CHILDHOOD_EVENTS,
+  ...EXTRA_CHILDHOOD_EVENTS,
   ...TEEN_EVENTS,
+  ...EXTRA_TEEN_EVENTS,
   ...ADULT_EVENTS,
+  ...EXTRA_ADULT_EVENTS,
   ...ELDER_EVENTS,
+  ...EXTRA_ELDER_EVENTS,
 ];
 
 /** 财富类随机事件 */
@@ -217,4 +228,6 @@ export const WEALTH_EVENTS: EventTemplate[] = [
   { id: 'royalty', type: 'wealth', title: '版税收入', description: '你的作品产生了持续的版税收入。', minAge: 25, maxAge: 60, weight: 2 },
   { id: 'gamble_win', type: 'wealth', title: '赌博赢钱', description: '你在一次赌博中赢了不少钱，但这也让你上瘾了。', minAge: 18, maxAge: 50, weight: 1 },
   { id: 'gamble_lose', type: 'wealth', title: '赌博输钱', description: '你在赌博中输了很多钱，家人都为你担心。', minAge: 18, maxAge: 50, weight: 2 },
+
+  ...EXTRA_WEALTH_EVENTS,
 ];

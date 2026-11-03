@@ -16,6 +16,8 @@ export interface Profession {
   incomeMax: number;
   /** 社会声望 0-100 */
   prestige: number;
+  /** 这个职业最早出现的年份（可选），太早出生的年代不会有这个行当 */
+  minYear?: number;
 }
 
 export const PROFESSIONS: Profession[] = [
@@ -47,7 +49,7 @@ export const PROFESSIONS: Profession[] = [
   { id: 'artist', name: '艺术家', minEducation: 3, intelligenceReq: 50, socialReq: 40, incomeMin: 10000, incomeMax: 300000, prestige: 60 },
   { id: 'freelancer', name: '自由职业者', minEducation: 2, intelligenceReq: 30, socialReq: 40, incomeMin: 15000, incomeMax: 200000, prestige: 35 },
   { id: 'athlete', name: '运动员', minEducation: 2, intelligenceReq: 20, socialReq: 50, incomeMin: 30000, incomeMax: 500000, prestige: 65 },
-  { id: 'streamer', name: '自媒体博主', minEducation: 2, intelligenceReq: 30, socialReq: 60, incomeMin: 20000, incomeMax: 1000000, prestige: 45 },
+  { id: 'streamer', name: '自媒体博主', minEducation: 2, intelligenceReq: 30, socialReq: 60, incomeMin: 20000, incomeMax: 1000000, prestige: 45, minYear: 2012 },
   { id: 'entrepreneur', name: '企业家', minEducation: 3, intelligenceReq: 55, socialReq: 60, incomeMin: 100000, incomeMax: 5000000, prestige: 90 },
 
   // ===== 新增职业 =====
@@ -127,7 +129,7 @@ export const PROFESSIONS: Profession[] = [
   // 新兴/小众职业
   { id: 'ai_researcher', name: 'AI研究员', minEducation: 5, intelligenceReq: 90, socialReq: 30, incomeMin: 200000, incomeMax: 1000000, prestige: 90 },
   { id: 'blockchain_dev', name: '区块链开发者', minEducation: 5, intelligenceReq: 85, socialReq: 25, incomeMin: 150000, incomeMax: 800000, prestige: 80 },
-  { id: 'esports_player', name: '电竞选手', minEducation: 1, intelligenceReq: 40, socialReq: 45, incomeMin: 30000, incomeMax: 500000, prestige: 50 },
+  { id: 'esports_player', name: '电竞选手', minEducation: 1, intelligenceReq: 40, socialReq: 45, incomeMin: 30000, incomeMax: 500000, prestige: 50, minYear: 1998 },
   { id: 'pet_breeder', name: '宠物繁育师', minEducation: 1, intelligenceReq: 15, socialReq: 25, incomeMin: 10000, incomeMax: 60000, prestige: 25 },
   { id: 'fortune_teller', name: '占卜师', minEducation: 0, intelligenceReq: 20, socialReq: 35, incomeMin: 8000, incomeMax: 50000, prestige: 15 },
   { id: 'medium', name: '心理咨询灵修师', minEducation: 2, intelligenceReq: 30, socialReq: 45, incomeMin: 20000, incomeMax: 100000, prestige: 35 },
@@ -167,4 +169,47 @@ export const PROFESSIONS: Profession[] = [
   { id: 'actor', name: '演员', minEducation: 2, intelligenceReq: 30, socialReq: 60, incomeMin: 15000, incomeMax: 1000000, prestige: 55 },
   { id: 'director', name: '导演', minEducation: 5, intelligenceReq: 70, socialReq: 60, incomeMin: 100000, incomeMax: 1000000, prestige: 80 },
   { id: 'producer', name: '制片人', minEducation: 5, intelligenceReq: 70, socialReq: 70, incomeMin: 150000, incomeMax: 800000, prestige: 85 },
+
+  // ===== 高危一线作业（对应职业伤害型死因）=====
+  { id: 'delivery_rider', name: '外卖骑手', minEducation: 0, intelligenceReq: 5, socialReq: 15, incomeMin: 12000, incomeMax: 45000, prestige: 14, minYear: 2013 },
+  { id: 'ride_hailing_driver', name: '网约车司机', minEducation: 1, intelligenceReq: 10, socialReq: 20, incomeMin: 15000, incomeMax: 55000, prestige: 18, minYear: 2014 },
+  { id: 'highrise_worker', name: '高空作业工人', minEducation: 1, intelligenceReq: 10, socialReq: 10, incomeMin: 18000, incomeMax: 70000, prestige: 20 },
+  { id: 'crane_operator', name: '塔吊司机', minEducation: 1, intelligenceReq: 20, socialReq: 10, incomeMin: 25000, incomeMax: 80000, prestige: 22 },
+  { id: 'tunnel_worker', name: '隧道工', minEducation: 0, intelligenceReq: 5, socialReq: 5, incomeMin: 18000, incomeMax: 65000, prestige: 18 },
+  { id: 'blaster', name: '爆破工', minEducation: 1, intelligenceReq: 20, socialReq: 10, incomeMin: 25000, incomeMax: 90000, prestige: 24 },
+  { id: 'welder', name: '焊工', minEducation: 1, intelligenceReq: 15, socialReq: 10, incomeMin: 18000, incomeMax: 70000, prestige: 22 },
+  { id: 'power_line_worker', name: '高压电检修工', minEducation: 1, intelligenceReq: 20, socialReq: 10, incomeMin: 22000, incomeMax: 85000, prestige: 25 },
+  { id: 'chemical_worker', name: '化工厂操作工', minEducation: 2, intelligenceReq: 20, socialReq: 10, incomeMin: 20000, incomeMax: 70000, prestige: 20 },
+  { id: 'fireworks_maker', name: '烟花制作工', minEducation: 0, intelligenceReq: 5, socialReq: 5, incomeMin: 8000, incomeMax: 40000, prestige: 12 },
+  { id: 'butcher', name: '屠宰工', minEducation: 0, intelligenceReq: 5, socialReq: 5, incomeMin: 10000, incomeMax: 45000, prestige: 14 },
+  { id: 'seafarer', name: '远洋船员', minEducation: 1, intelligenceReq: 15, socialReq: 15, incomeMin: 25000, incomeMax: 120000, prestige: 25 },
+  { id: 'diver', name: '职业潜水员', minEducation: 2, intelligenceReq: 25, socialReq: 15, incomeMin: 35000, incomeMax: 150000, prestige: 35 },
+  { id: 'forest_ranger', name: '护林员', minEducation: 1, intelligenceReq: 15, socialReq: 10, incomeMin: 12000, incomeMax: 45000, prestige: 20 },
+  { id: 'street_cleaner', name: '环卫工人', minEducation: 0, intelligenceReq: 0, socialReq: 5, incomeMin: 6000, incomeMax: 25000, prestige: 8 },
+  { id: 'mover', name: '搬家工', minEducation: 0, intelligenceReq: 5, socialReq: 10, incomeMin: 10000, incomeMax: 40000, prestige: 12 },
+  { id: 'sorter', name: '快递分拣员', minEducation: 0, intelligenceReq: 5, socialReq: 5, incomeMin: 9000, incomeMax: 35000, prestige: 10 },
+  { id: 'oil_worker', name: '石油工人', minEducation: 2, intelligenceReq: 25, socialReq: 15, incomeMin: 30000, incomeMax: 120000, prestige: 30 },
+
+  // ===== 新兴服务业 =====
+  { id: 'barista', name: '咖啡师', minEducation: 1, intelligenceReq: 20, socialReq: 30, incomeMin: 12000, incomeMax: 50000, prestige: 20 },
+  { id: 'pet_groomer', name: '宠物美容师', minEducation: 1, intelligenceReq: 15, socialReq: 25, incomeMin: 12000, incomeMax: 55000, prestige: 20 },
+  { id: 'drone_pilot', name: '无人机飞手', minEducation: 3, intelligenceReq: 40, socialReq: 20, incomeMin: 30000, incomeMax: 120000, prestige: 35, minYear: 2013 },
+  { id: 'funeral_worker', name: '殡葬师', minEducation: 2, intelligenceReq: 20, socialReq: 15, incomeMin: 18000, incomeMax: 80000, prestige: 25 },
+  { id: 'care_worker', name: '养老护理员', minEducation: 0, intelligenceReq: 5, socialReq: 25, incomeMin: 8000, incomeMax: 35000, prestige: 15 },
+  { id: 'nanny', name: '育儿嫂', minEducation: 1, intelligenceReq: 15, socialReq: 30, incomeMin: 15000, incomeMax: 60000, prestige: 20 },
+  { id: 'live_stream_seller', name: '直播带货主播', minEducation: 1, intelligenceReq: 25, socialReq: 65, incomeMin: 15000, incomeMax: 2000000, prestige: 40, minYear: 2016 },
+  { id: 'short_video_creator', name: '短视频创作者', minEducation: 1, intelligenceReq: 30, socialReq: 55, incomeMin: 10000, incomeMax: 1500000, prestige: 38, minYear: 2016 },
+  { id: 'game_coach', name: '游戏代练', minEducation: 0, intelligenceReq: 25, socialReq: 20, incomeMin: 8000, incomeMax: 120000, prestige: 12, minYear: 2005 },
+  { id: 'metro_driver', name: '地铁司机', minEducation: 3, intelligenceReq: 35, socialReq: 20, incomeMin: 25000, incomeMax: 70000, prestige: 30 },
+
+  // ===== 医疗与教育一线 =====
+  { id: 'er_doctor', name: '急诊医生', minEducation: 5, intelligenceReq: 80, socialReq: 45, incomeMin: 90000, incomeMax: 400000, prestige: 85 },
+  { id: 'rural_doctor', name: '乡村医生', minEducation: 4, intelligenceReq: 50, socialReq: 45, incomeMin: 15000, incomeMax: 50000, prestige: 45 },
+  { id: 'volunteer_teacher', name: '支教老师', minEducation: 4, intelligenceReq: 55, socialReq: 50, incomeMin: 8000, incomeMax: 30000, prestige: 50 },
+
+  // ===== 高风险户外 =====
+  { id: 'mountain_guide', name: '登山向导', minEducation: 2, intelligenceReq: 30, socialReq: 40, incomeMin: 25000, incomeMax: 150000, prestige: 40 },
+  { id: 'ski_instructor', name: '滑雪教练', minEducation: 2, intelligenceReq: 25, socialReq: 40, incomeMin: 20000, incomeMax: 100000, prestige: 35 },
+  { id: 'surf_instructor', name: '冲浪教练', minEducation: 1, intelligenceReq: 20, socialReq: 40, incomeMin: 15000, incomeMax: 70000, prestige: 30 },
+  { id: 'war_reporter', name: '战地记者', minEducation: 4, intelligenceReq: 65, socialReq: 55, incomeMin: 40000, incomeMax: 250000, prestige: 70 },
 ];

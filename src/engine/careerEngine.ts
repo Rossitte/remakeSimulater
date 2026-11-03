@@ -64,7 +64,11 @@ export function simulateCareer(
     return { stages: [], mainCareer: '无', highestPrestige: 0, retireAge: effectiveRetire, events: [] };
   }
 
-  const eligible = PROFESSIONS.filter((p) => education.levelIndex >= p.minEducation);
+  // 时代门槛：外卖骑手、直播主播这类职业在人物成年时还不存在，就不该出现
+  const careerStartYear = birth.year + startAge;
+  const eligible = PROFESSIONS.filter(
+    (p) => education.levelIndex >= p.minEducation && (!p.minYear || careerStartYear >= p.minYear),
+  );
 
   // 超级富裕家庭（economicScore >= 85）：直接排除所有低声望蓝领职业
   // 非常富裕家庭（economicScore >= 70）：大幅降低蓝领职业权重

@@ -33,6 +33,8 @@ export interface LifeResult {
   lifespanDays: number;
   deathCause: string;
   deathType: 'natural' | 'illness' | 'accident' | 'infant' | 'childhood' | 'war' | 'disaster' | 'crime';
+  /** 若死因被职业伤害改写，这里是当时的职业名 */
+  deathJob?: string;
   education: EducationLevel;
   careerStages: CareerStage[];
   mainCareer: string;

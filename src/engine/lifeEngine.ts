@@ -17,6 +17,7 @@ import { simulateWealth } from './wealthEngine';
 import { sampleSocialEvent } from './eventEngine';
 import { computeScore } from './scoreEngine';
 import { buildEvaluation } from './evaluationEngine';
+import { refineOccupationalDeath } from './deathEngine';
 import { chance, randomInt, uid } from '../utils/random';
 
 export interface GenerateLifeOptions {
@@ -36,6 +37,8 @@ export function generateLife(index: number, opts: GenerateLifeOptions = {}): Lif
   const roughRetireAge = 65;
   const health = simulateHealth(birth, person, roughRetireAge);
   const career = simulateCareer(birth, person, edu, health.age);
+  // 把「车祸/意外」这类笼统死因，替换成与最后一份职业相符的具体场景
+  const deathJob = applyOccupationalDeath(health, career);
   const family = simulateFamily(birth, person, health.age);
   const wealth = simulateWealth(birth, person, career, family, health);
 
@@ -75,6 +78,16 @@ export function generateLife(index: number, opts: GenerateLifeOptions = {}): Lif
       return 0;
     });
 
+  // 同一模板可能在不同年纪重复触发，事件列表里只保留第一次（死亡事件除外）
+  const seenEvents = new Set<string>();
+  const uniqueEvents: LifeEvent[] = [];
+  for (const e of majorEvents) {
+    const key = e.title + '|' + e.description;
+    if (seenEvents.has(key) && e !== deathEvent) continue;
+    seenEvents.add(key);
+    uniqueEvents.push(e);
+  }
+
   const lifeResult: LifeResult = {
     birthInfo: birth,
     age: health.age,
@@ -90,9 +103,10 @@ export function generateLife(index: number, opts: GenerateLifeOptions = {}): Lif
     lifetimeIncome: wealth.lifetimeIncome,
     peakAssets: wealth.peakAssets,
     finalAssets: wealth.finalAssets,
-    majorEvents,
+    majorEvents: uniqueEvents,
     hadMajorIllness: health.events.some((e) => e.type === 'health' && e.title.startsWith('确诊')),
     hadAccident: health.events.some((e) => e.type === 'accident'),
+    deathJob,
     luckyEvents:
       wealth.events.filter((e) => ['彩票中奖', '获得遗产', '投资大赚', '创业成功'].includes(e.title)).length +
       (person.attributes.luck >= 85 ? 1 : 0),
@@ -113,6 +127,47 @@ export function generateLife(index: number, opts: GenerateLifeOptions = {}): Lif
     evaluation,
     createdAt: Date.now(),
   };
+}
+
+/**
+ * 职业伤害死因改写：仅当这个人确实死于意外或疾病时，
+ * 才把死因换成最后一份职业对应的工伤/职业病场景。
+ * 返回被改写的职业名（没有改写则返回 undefined）。
+ */
+function applyOccupationalDeath(health: HealthResult, career: CareerResult): string | undefined {
+  if (health.deathType !== 'accident' && health.deathType !== 'illness') return undefined;
+
+  const lastStage = career.stages.length > 0 ? career.stages[career.stages.length - 1] : null;
+  const job = lastStage ? lastStage.title : career.mainCareer;
+  if (!job || job === '无') return undefined;
+
+  const refined = refineOccupationalDeath(health.deathType, job);
+  if (!refined) return undefined;
+
+  health.deathCause = refined.cause;
+
+  // 死亡当岁若已有事件（意外类通常有），就地改写；否则补一条
+  let replaced = false;
+  for (let i = health.events.length - 1; i >= 0; i--) {
+    const ev = health.events[i];
+    if (ev.age === health.age) {
+      ev.type = 'accident';
+      ev.title = refined.title;
+      ev.description = refined.description;
+      replaced = true;
+      break;
+    }
+  }
+  if (!replaced) {
+    health.events.push({
+      age: health.age,
+      type: 'accident',
+      title: refined.title,
+      description: refined.description,
+    });
+  }
+
+  return job;
 }
 
 /** 根据实际人生数据计算人生遗憾 */

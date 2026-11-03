@@ -1,8 +1,12 @@
 /* ============================================================
    作弊模式 · 抽卡卡池
    - 4 档稀有度：红色(顶级好) / 金色(次好) / 紫蓝(普通好) / 黑色(坏)
-   - 好卡与坏卡数量 1:1（实际按红+金+蓝 = 黑，好:坏 = 18:18）
+   - 出卡概率由 cheatEngine 的 RARITY_TIER_PERCENT 按「档位」定义
+     （红 6% / 金 20% / 蓝 56% / 黑 18%），与每档卡片数量无关；
+     这里的张数只决定同档内的多样性和单卡稀有度。
    - 每张卡片带有「效果对象 CheatEffect」，在出生/人生产生时应用
+   - forceCountryId 必须与 data/countries.ts 的 id 完全一致（全小写），
+     否则该卡会静默变成废卡（可用 npm run report:cheat 体检）。
    ============================================================ */
 
 export type CardRarity = 'red' | 'gold' | 'blue' | 'black';
@@ -97,12 +101,14 @@ export const CARD_RARITY_META: Record<CardRarity, {
 };
 
 /* ================================================================
-   卡池定义：共 92 张
-     好卡 52 = 红色 8 + 金色 18 + 蓝/紫 26
-     坏卡 40 = 黑色 40（好:坏 ≈ 56:44，好卡略多增加"有得选"的快乐感）
+   卡池定义：共 104 张
+     好卡 64 = 红色 10 + 金色 22 + 蓝/紫 32
+     坏卡 40 = 黑色 40
+   注意：好/坏卡的**出卡概率**由 cheatEngine.RARITY_TIER_PERCENT 控制
+   （当前 82% : 18%），与这里的张数无关 —— 张数只影响同档内单卡稀有感。
    ================================================================ */
 export const CHEAT_CARDS: CheatCardDef[] = [
-  // ---- 红色（顶级好，3 + 5 = 8）----
+  // ---- 红色（顶级好，8 + 2 = 10）----
   {
     id: 'super_wealthy',
     rarity: 'red',
@@ -144,7 +150,7 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     name: '花园之城',
     description: '强制出生在 🇸🇬 新加坡：经济95+医疗92+治安90+寿命84。',
     icon: '🇸🇬',
-    effect: { forceCountryId: 'SG' },
+    effect: { forceCountryId: 'sg' },
   },
   {
     id: 'switzerland_pass',
@@ -152,7 +158,7 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     name: '阿尔卑斯山下',
     description: '强制出生在 🇨🇭 瑞士：世界最富之一 + 全球最高医疗水平。',
     icon: '🇨🇭',
-    effect: { forceCountryId: 'CH' },
+    effect: { forceCountryId: 'ch' },
   },
   {
     id: 'gen_z_born',
@@ -170,8 +176,29 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     icon: '🏮',
     effect: { familyLevelDelta: 85, parentJobWealthDelta: 35, familyStabilityDelta: 45 },
   },
+  // 新红 1：体质 / 运气
+  {
+    id: 'iron_constitution',
+    rarity: 'red',
+    name: '金刚不坏',
+    description: '健康下限 90、免疫力下限 80，耐力与体力 +10：一辈子几乎不生病。',
+    icon: '🦾',
+    effect: {
+      healthMin: 90,
+      attrsFloor: { immunity: 80 },
+      attrsDelta: { stamina: 10, strength: 10 },
+    },
+  },
+  {
+    id: 'child_of_fate',
+    rarity: 'red',
+    name: '天命所归',
+    description: '运气 +45、人缘 +15、健康下限 72：好事总会主动找上门。',
+    icon: '🌟',
+    effect: { luckDelta: 45, attrsDelta: { socialConnection: 15 }, healthMin: 72 },
+  },
 
-  // ---- 金色（次好，6 + 12 = 18）----
+  // ---- 金色（次好，18 + 4 = 22）----
   {
     id: 'born_rich',
     rarity: 'gold',
@@ -186,7 +213,7 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     name: '一定要生在中国',
     description: '强制出生地为🇨🇳 中国（优先一线/新一线城市）。',
     icon: '🇨🇳',
-    effect: { forceCountryId: 'CN' },
+    effect: { forceCountryId: 'cn' },
   },
   {
     id: 'us_pass',
@@ -194,7 +221,7 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     name: '美利坚绿卡',
     description: '强制出生地为🇺🇸 美国。',
     icon: '🇺🇸',
-    effect: { forceCountryId: 'US' },
+    effect: { forceCountryId: 'us' },
   },
   {
     id: 'jk_pass',
@@ -202,7 +229,7 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     name: '樱花之国',
     description: '强制出生地为🇯🇵 日本。',
     icon: '🇯🇵',
-    effect: { forceCountryId: 'JP' },
+    effect: { forceCountryId: 'jp' },
   },
   {
     id: 'strong_body',
@@ -225,37 +252,37 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     id: 'germany_pass',
     rarity: 'gold', name: '莱茵河畔',
     description: '强制出生在 🇩🇪 德国：欧洲制造强国 + 免费教育。',
-    icon: '🇩🇪', effect: { forceCountryId: 'DE' },
+    icon: '🇩🇪', effect: { forceCountryId: 'de' },
   },
   {
     id: 'norway_pass',
     rarity: 'gold', name: '北欧童话',
     description: '强制出生在 🇳🇴 挪威：人类发展指数 TOP + 丰厚石油福利。',
-    icon: '🇳🇴', effect: { forceCountryId: 'NO' },
+    icon: '🇳🇴', effect: { forceCountryId: 'no' },
   },
   {
     id: 'canada_pass',
     rarity: 'gold', name: '枫叶之国',
     description: '强制出生在 🇨🇦 加拿大：地广人稀 + 移民友好。',
-    icon: '🇨🇦', effect: { forceCountryId: 'CA' },
+    icon: '🇨🇦', effect: { forceCountryId: 'ca' },
   },
   {
     id: 'australia_pass',
     rarity: 'gold', name: '阳光海岸',
     description: '强制出生在 🇦🇺 澳大利亚：南半球发达国家。',
-    icon: '🇦🇺', effect: { forceCountryId: 'AU' },
+    icon: '🇦🇺', effect: { forceCountryId: 'au' },
   },
   {
     id: 'korea_pass',
     rarity: 'gold', name: '汉江奇迹',
     description: '强制出生在 🇰🇷 韩国：教育 92 + 经济 90。',
-    icon: '🇰🇷', effect: { forceCountryId: 'KR' },
+    icon: '🇰🇷', effect: { forceCountryId: 'kr' },
   },
   {
     id: 'singapore_gold',
     rarity: 'gold', name: '亚洲小龙',
     description: '强制出生在 🇸🇬 新加坡（金卡版，稀有度比红低）。',
-    icon: '🦁', effect: { forceCountryId: 'SG', attrsDelta: { education: 10 } },
+    icon: '🦁', effect: { forceCountryId: 'sg', attrsDelta: { education: 10 } },
     weight: 0.6,
   },
   // 新金 2：非国家类
@@ -278,7 +305,7 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     rarity: 'gold', name: '改革开放之子',
     description: '1978~1992 年在中国出生（时代红利满满）。',
     icon: '🧧',
-    effect: { birthYearMin: 1978, birthYearMax: 1992, forceCountryId: 'CN', luckDelta: 15 },
+    effect: { birthYearMin: 1978, birthYearMax: 1992, forceCountryId: 'cn', luckDelta: 15 },
   },
   {
     id: 'doctor_parents',
@@ -301,8 +328,35 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     icon: '🍀',
     effect: { luckDelta: 20, attrsDelta: { socialConnection: 20 } },
   },
+  // 新金 3：高福利国家 + 性格/人脉
+  {
+    id: 'netherlands_pass',
+    rarity: 'gold', name: '风车之国',
+    description: '强制出生在 🇳🇱 荷兰：经济 92 + 医疗 90 + 治安 85 + 教育 90。',
+    icon: '🇳🇱', effect: { forceCountryId: 'nl' },
+  },
+  {
+    id: 'sweden_pass',
+    rarity: 'gold', name: '北欧摇篮',
+    description: '强制出生在 🇸🇪 瑞典：高福利 + 教育 90 + 预期寿命 83。',
+    icon: '🇸🇪', effect: { forceCountryId: 'se' },
+  },
+  {
+    id: 'self_discipline',
+    rarity: 'gold', name: '自律人生',
+    description: '意志力下限 85、心理下限 70、教育 +15：想做的事基本都能坚持下来。',
+    icon: '🧘',
+    effect: { attrsFloor: { willpower: 85, mental: 70 }, attrsDelta: { education: 15 } },
+  },
+  {
+    id: 'noble_helper',
+    rarity: 'gold', name: '贵人相助',
+    description: '人缘 +30、运气 +15、父母职业加权 +10：走到哪都有人拉一把。',
+    icon: '🤝',
+    effect: { attrsDelta: { socialConnection: 30 }, luckDelta: 15, parentJobWealthDelta: 10 },
+  },
 
-  // ---- 蓝/紫色（普通好，9 + 17 = 26）----
+  // ---- 蓝/紫色（普通好，26 + 6 = 32）----
   {
     id: 'wealthy_pick',
     rarity: 'blue',
@@ -315,33 +369,33 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     id: 'looks_floor',
     rarity: 'blue',
     name: '颜值保底',
-    description: '颜值下限 +20。',
+    description: '颜值下限 62、魅力 +5：至少是班里长得顺眼的那一类。',
     icon: '✨',
-    effect: { appearanceMin: 20 },
+    effect: { appearanceMin: 62, attrsDelta: { charisma: 5 } },
   },
   {
     id: 'iq_floor',
     rarity: 'blue',
-    name: '智商下限 +15',
-    description: '智力下限 +15，考试不翻车。',
+    name: '智商下限 45',
+    description: '智力下限 45：考试不翻车。',
     icon: '📘',
-    effect: { intelligenceMin: 15, attrsFloor: { intelligence: 15 } },
+    effect: { intelligenceMin: 45 },
   },
   {
     id: 'healthy_family',
     rarity: 'blue',
     name: '和睦家庭',
-    description: '家庭稳定性 +30，父母更可能相伴一生。',
+    description: '家庭稳定性 +30，心理 +12：父母更可能相伴一生。',
     icon: '👨‍👩‍👧',
-    effect: { familyStabilityDelta: 30 },
+    effect: { familyStabilityDelta: 30, attrsDelta: { mental: 12, willpower: 8 } },
   },
   {
     id: 'rich_region',
     rarity: 'blue',
     name: '一线优先',
-    description: '优先出生在东部沿海/高收入地区。',
+    description: '优先出生在东部沿海/高收入地区：家庭经济 +22%，教育 +8。',
     icon: '🌆',
-    effect: { parentJobWealthDelta: 10, familyLevelDelta: 8 },
+    effect: { parentJobWealthDelta: 15, familyLevelDelta: 22, attrsDelta: { education: 8 } },
   },
   {
     id: 'chad_body',
@@ -379,14 +433,14 @@ export const CHEAT_CARDS: CheatCardDef[] = [
   {
     id: 'gen_x_born',
     rarity: 'blue', name: '80 后',
-    description: '1980~1989 年出生。',
-    icon: '📼', effect: { birthYearMin: 1980, birthYearMax: 1989 },
+    description: '1980~1989 年出生：竞争激烈但也最能扛，意志力 +8、耐力 +6。',
+    icon: '📼', effect: { birthYearMin: 1980, birthYearMax: 1989, attrsDelta: { willpower: 8, stamina: 6 } },
   },
   {
     id: 'millennial_born',
     rarity: 'blue', name: '90 后',
-    description: '1990~1999 年出生。',
-    icon: '🎮', effect: { birthYearMin: 1990, birthYearMax: 1999 },
+    description: '1990~1999 年出生：互联网第一代，人缘 +8、教育 +6。',
+    icon: '🎮', effect: { birthYearMin: 1990, birthYearMax: 1999, attrsDelta: { socialConnection: 8, education: 6 } },
   },
   {
     id: 'alpha_born',
@@ -399,55 +453,55 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     id: 'uk_pass',
     rarity: 'blue', name: '雾都之子',
     description: '强制出生在 🇬🇧 英国。',
-    icon: '🇬🇧', effect: { forceCountryId: 'GB' },
+    icon: '🇬🇧', effect: { forceCountryId: 'gb' },
   },
   {
     id: 'france_pass',
     rarity: 'blue', name: '浪漫巴黎',
     description: '强制出生在 🇫🇷 法国。',
-    icon: '🇫🇷', effect: { forceCountryId: 'FR' },
+    icon: '🇫🇷', effect: { forceCountryId: 'fr' },
   },
   {
     id: 'spain_pass',
     rarity: 'blue', name: '热情伊比利亚',
     description: '强制出生在 🇪🇸 西班牙。',
-    icon: '🇪🇸', effect: { forceCountryId: 'ES' },
+    icon: '🇪🇸', effect: { forceCountryId: 'es' },
   },
   {
     id: 'italy_pass',
     rarity: 'blue', name: '罗马之子',
     description: '强制出生在 🇮🇹 意大利。',
-    icon: '🇮🇹', effect: { forceCountryId: 'IT' },
+    icon: '🇮🇹', effect: { forceCountryId: 'it' },
   },
   {
     id: 'uae_gold_sa',
     rarity: 'blue', name: '石油之家',
     description: '强制出生在 🇸🇦 沙特阿拉伯。',
-    icon: '🛢️', effect: { forceCountryId: 'SA', familyLevelDelta: 20 },
+    icon: '🛢️', effect: { forceCountryId: 'sa', familyLevelDelta: 20 },
   },
   {
     id: 'malaysia_pass',
     rarity: 'blue', name: '南洋度假',
     description: '强制出生在 🇲🇾 马来西亚。',
-    icon: '🇲🇾', effect: { forceCountryId: 'MY' },
+    icon: '🇲🇾', effect: { forceCountryId: 'my' },
   },
   {
     id: 'thailand_pass',
     rarity: 'blue', name: '微笑之国',
     description: '强制出生在 🇹🇭 泰国。',
-    icon: '🇹🇭', effect: { forceCountryId: 'TH' },
+    icon: '🇹🇭', effect: { forceCountryId: 'th' },
   },
   {
     id: 'russia_pass',
     rarity: 'blue', name: '冰雪俄罗斯',
     description: '强制出生在 🇷🇺 俄罗斯。',
-    icon: '🇷🇺', effect: { forceCountryId: 'RU' },
+    icon: '🇷🇺', effect: { forceCountryId: 'ru' },
   },
   {
     id: 'brazil_pass',
     rarity: 'blue', name: '桑巴之国',
     description: '强制出生在 🇧🇷 巴西。',
-    icon: '🇧🇷', effect: { forceCountryId: 'BR' },
+    icon: '🇧🇷', effect: { forceCountryId: 'br' },
   },
   // 新蓝 3：属性/家境小提升
   {
@@ -459,8 +513,8 @@ export const CHEAT_CARDS: CheatCardDef[] = [
   {
     id: 'civil_servant_fam',
     rarity: 'blue', name: '公务员之家',
-    description: '家庭稳定性 +18，父母职业偏好公职。',
-    icon: '🏛️', effect: { familyStabilityDelta: 18, parentJobWealthDelta: 12 },
+    description: '家庭稳定性 +18，父母职业偏好公职，教育 +8。',
+    icon: '🏛️', effect: { familyStabilityDelta: 18, parentJobWealthDelta: 12, attrsDelta: { education: 8 } },
   },
   {
     id: 'programmer_fam',
@@ -480,8 +534,45 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     description: '力量 +15、耐力 +15、健康 +10。',
     icon: '⚽', effect: { attrsDelta: { strength: 15, stamina: 15, health: 10 } },
   },
+  // 新蓝 4：基础属性补强（蓝卡占 56%，让每一包都好用）
+  {
+    id: 'bookish_home',
+    rarity: 'blue', name: '书香氛围',
+    description: '教育 +15、智力 +8。',
+    icon: '📖', effect: { attrsDelta: { education: 15, intelligence: 8 } },
+  },
+  {
+    id: 'well_built',
+    rarity: 'blue', name: '体格匀称',
+    description: '健康 +12、颜值 +10。',
+    icon: '🧍', effect: { attrsDelta: { health: 12, appearance: 10 } },
+  },
+  {
+    id: 'sunny_mood',
+    rarity: 'blue', name: '乐观开朗',
+    description: '心理 +15、魅力 +10。',
+    icon: '😄', effect: { attrsDelta: { mental: 15, charisma: 10 } },
+  },
+  {
+    id: 'poland_pass',
+    rarity: 'blue', name: '维斯瓦河畔',
+    description: '强制出生在 🇵🇱 波兰：经济 70 + 教育 80 + 治安 75。',
+    icon: '🇵🇱', effect: { forceCountryId: 'pl' },
+  },
+  {
+    id: 'cozy_town',
+    rarity: 'blue', name: '小城安逸',
+    description: '家庭稳定性 +20、心理 +10：父母和睦，童年安稳。',
+    icon: '🏡', effect: { familyStabilityDelta: 20, attrsDelta: { mental: 10 } },
+  },
+  {
+    id: 'small_luck',
+    rarity: 'blue', name: '好运连连',
+    description: '运气 +12、人缘 +10。',
+    icon: '🍬', effect: { luckDelta: 12, attrsDelta: { socialConnection: 10 } },
+  },
 
-  // ---- 黑色（坏卡，18 + 22 = 40 张对称）----
+  // ---- 黑色（坏卡，18 + 22 = 40）----
   {
     id: 'super_poor',
     rarity: 'black',
@@ -512,7 +603,7 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     name: '战乱之地',
     description: '强制出生在 🇸🇾 叙利亚（冲突指数 85）。',
     icon: '⚔️',
-    effect: { forceCountryId: 'SY' },
+    effect: { forceCountryId: 'sy' },
   },
   {
     id: 'cursed_luck',
@@ -615,9 +706,9 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     id: 'poor_parents',
     rarity: 'black',
     name: '父母能力有限',
-    description: '父母职业加权低薪职业 +40。',
+    description: '父母职业加权低薪职业 +40，家庭经济 -18，家庭稳定性 -8。',
     icon: '🧹',
-    effect: { parentJobWealthDelta: -40 },
+    effect: { parentJobWealthDelta: -40, familyLevelDelta: -18, familyStabilityDelta: -8 },
   },
   {
     id: 'no_good_deed',
@@ -633,7 +724,7 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     id: 'south_sudan_poor',
     rarity: 'black', name: '朱巴街头',
     description: '强制出生在 🇸🇸 南苏丹：全球最贫困国家 + 战乱等级 80。',
-    icon: '🇸🇸', effect: { forceCountryId: 'SS' },
+    icon: '🇸🇸', effect: { forceCountryId: 'ss' },
   },
   {
     id: 'drc_congo',
@@ -645,31 +736,31 @@ export const CHEAT_CARDS: CheatCardDef[] = [
     id: 'ethiopia_born',
     rarity: 'black', name: '东非高原',
     description: '强制出生在 🇪🇹 埃塞俄比亚：经济 20 + 战乱 35。',
-    icon: '🇪🇹', effect: { forceCountryId: 'ET' },
+    icon: '🇪🇹', effect: { forceCountryId: 'et' },
   },
   {
     id: 'nigeria_north',
     rarity: 'black', name: '拉各斯艳阳',
     description: '强制出生在 🇳🇬 尼日利亚：经济 30 + 安全 35 + 战乱 25。',
-    icon: '🇳🇬', effect: { forceCountryId: 'NG' },
+    icon: '🇳🇬', effect: { forceCountryId: 'ng' },
   },
   {
     id: 'sudan_born',
     rarity: 'black', name: '喀土穆风沙',
     description: '强制出生在 🇸🇩 苏丹：战乱 70 + 经济 20。',
-    icon: '🇸🇩', effect: { forceCountryId: 'SD' },
+    icon: '🇸🇩', effect: { forceCountryId: 'sd' },
   },
   {
     id: 'ukraine_war',
     rarity: 'black', name: '战火乌克兰',
     description: '强制出生在 🇺🇦 乌克兰：战乱等级 85。',
-    icon: '🇺🇦', effect: { forceCountryId: 'UA' },
+    icon: '🇺🇦', effect: { forceCountryId: 'ua' },
   },
   {
     id: 'iraq_born',
     rarity: 'black', name: '巴格达废墟',
     description: '强制出生在 🇮🇶 伊拉克：战乱 60 + 安全 30。',
-    icon: '🇮🇶', effect: { forceCountryId: 'IQ' },
+    icon: '🇮🇶', effect: { forceCountryId: 'iq' },
   },
   {
     id: 'myanmar_born',
