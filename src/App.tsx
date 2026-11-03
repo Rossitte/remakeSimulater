@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react';
 import HomePage from './components/HomePage/HomePage';
 import BirthAnimation from './components/BirthAnimation/BirthAnimation';
 import LifeResult from './components/LifeResult/LifeResult';
+import FeedbackDialog from './components/FeedbackDialog/FeedbackDialog';
+import './components/FeedbackDialog/FeedbackDialog.css';
 import { useGameStore } from './store/gameStore';
 import { generateLife } from './engine/lifeEngine';
 import type { LifeRecord } from './models/LifeRecord';
@@ -33,6 +35,7 @@ export default function App() {
   const [draft, setDraft] = useState<LifeRecord | null>(null);
   const [current, setCurrent] = useState<LifeRecord | null>(null);
   const [cheat, setCheat] = useState<CheatOptions>(DEFAULT_CHEAT_OPTIONS);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   const onToggleCheatMode = useCallback((v: boolean) => {
     setCheat((c) => ({ ...c, cheatMode: v }));
@@ -80,16 +83,16 @@ export default function App() {
     setScreen('result');
   };
 
+  let content: JSX.Element;
+
   if (screen === 'rolling' && draft) {
-    return (
+    content = (
       <div className="app">
         <BirthAnimation record={draft} onComplete={handleBirthDone} />
       </div>
     );
-  }
-
-  if (screen === 'result' && current) {
-    return (
+  } else if (screen === 'result' && current) {
+    content = (
       <div className="app">
         <LifeResult
           record={current}
@@ -100,31 +103,60 @@ export default function App() {
         />
       </div>
     );
+  } else {
+    content = (
+      <div className="app">
+        <HomePage
+          lives={lives}
+          stats={stats}
+          achievementStats={achievementStats}
+          unlockedAchievementIds={unlockedAchievementIds}
+          codexStats={codexStats}
+          unlockedCodex={unlockedCodex}
+          cheat={cheat}
+          onStart={startReincarnation}
+          onSelect={handleView}
+          onClear={clearHistory}
+          onResetAchievements={() => {
+            if (window.confirm('确定要重置所有成就吗？解锁过的成就将全部消失，无法恢复。')) {
+              clearAllAchievements();
+            }
+          }}
+          onToggleCheatMode={onToggleCheatMode}
+          onPickCountry={onPickCountry}
+          onActivateCards={onActivateCards}
+          onClearCards={onClearCards}
+        />
+      </div>
+    );
   }
 
+  // 每个页面底部都挂一个意见反馈入口（弹窗用 portal 渲染到 body）
   return (
-    <div className="app">
-      <HomePage
-        lives={lives}
-        stats={stats}
-        achievementStats={achievementStats}
-        unlockedAchievementIds={unlockedAchievementIds}
-        codexStats={codexStats}
-        unlockedCodex={unlockedCodex}
-        cheat={cheat}
-        onStart={startReincarnation}
-        onSelect={handleView}
-        onClear={clearHistory}
-        onResetAchievements={() => {
-          if (window.confirm('确定要重置所有成就吗？解锁过的成就将全部消失，无法恢复。')) {
-            clearAllAchievements();
-          }
-        }}
-        onToggleCheatMode={onToggleCheatMode}
-        onPickCountry={onPickCountry}
-        onActivateCards={onActivateCards}
-        onClearCards={onClearCards}
-      />
-    </div>
+    <>
+      {content}
+      <button
+        type="button"
+        className="feedback-fab"
+        onClick={() => setFeedbackOpen(true)}
+        title="意见反馈"
+        aria-label="意见反馈"
+        aria-haspopup="dialog"
+      >
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H9l-4.2 3.4a.6.6 0 0 1-1-.6V5.5Z"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+          />
+          <circle cx="8.5" cy="10" r="1" fill="currentColor" />
+          <circle cx="12" cy="10" r="1" fill="currentColor" />
+          <circle cx="15.5" cy="10" r="1" fill="currentColor" />
+        </svg>
+        <span className="feedback-fab-label">反馈</span>
+      </button>
+      <FeedbackDialog open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
+    </>
   );
 }

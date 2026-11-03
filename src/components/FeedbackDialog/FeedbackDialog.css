@@ -1,0 +1,224 @@
+/* 意见反馈：底部小图标 + 弹窗 */
+
+/* ---------- 底部小图标 ---------- */
+.feedback-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid rgba(212, 178, 94, 0.28);
+  border-radius: 50%;
+  background: rgba(21, 21, 31, 0.82);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 8px 22px -10px rgba(0, 0, 0, 0.8);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.feedback-fab svg {
+  display: block;
+  width: 19px;
+  height: 19px;
+}
+
+.feedback-fab-label {
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.5px;
+}
+
+@media (hover: hover) {
+  .feedback-fab:hover {
+    color: var(--gold-bright);
+    border-color: rgba(240, 212, 136, 0.55);
+    background: rgba(27, 27, 40, 0.92);
+    transform: translateY(-2px);
+  }
+}
+
+.feedback-fab:focus-visible {
+  outline: 2px solid rgba(240, 212, 136, 0.7);
+  outline-offset: 2px;
+}
+
+/* ---------- 弹窗 ---------- */
+.fb-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(4, 4, 8, 0.78);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  animation: fb-fade 0.18s ease-out;
+}
+
+.fb-panel {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  padding: 22px 20px 20px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--card-hi), var(--card));
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  text-align: center;
+  animation: fb-pop 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fb-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.fb-title {
+  font-size: 18px;
+  letter-spacing: 4px;
+  color: var(--gold-bright);
+}
+
+.fb-close {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-dim);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+@media (hover: hover) {
+  .fb-close:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.12);
+  }
+}
+
+.fb-text {
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+.fb-wechat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border: 1px dashed rgba(212, 178, 94, 0.4);
+  border-radius: 12px;
+  background: rgba(212, 178, 94, 0.06);
+}
+
+.fb-wechat-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.fb-wechat-id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--gold-bright);
+  user-select: all;
+  -webkit-user-select: all;
+}
+
+.fb-copy {
+  min-height: 28px;
+  padding: 4px 12px;
+  border: 1px solid rgba(212, 178, 94, 0.45);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+@media (hover: hover) {
+  .fb-copy:hover {
+    background: rgba(212, 178, 94, 0.16);
+    color: var(--gold-bright);
+  }
+}
+
+.fb-ok {
+  width: 100%;
+  padding: 11px 0;
+  font-size: 15px;
+  letter-spacing: 4px;
+  animation: none;
+}
+
+@keyframes fb-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fb-pop {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fb-mask,
+  .fb-panel {
+    animation: none;
+  }
+}
+
+/* 窄屏：弹窗宽度自适应，按钮加手感高度 */
+@media (max-width: 680px) {
+  .fb-panel {
+    max-width: none;
+    padding: 20px 16px 16px;
+  }
+
+  .fb-wechat-id {
+    font-size: 17px;
+  }
+
+  .fb-ok {
+    min-height: 48px;
+  }
+}
