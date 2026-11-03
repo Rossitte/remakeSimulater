@@ -48,76 +48,74 @@
 }
 
 /*
- * 平时是金色主按钮底下的一条紫色小边（约 20px 高），
- * 只露一个角；hover / 键盘聚焦后向下展开，露出「作弊改命」。
- * 点击一次直接打开作弊控制台。
+ * 开始按钮下面自己垂出来的小把手（不用 hover 逻辑）：
+ * 平时就是一颗低调的半透明紫胶囊，文字「作弊改命」一直可见；
+ * 点击区域做成 44px 高（触屏舒适），但胶囊从开始按钮下面再垂出 6px，
+ * 视觉上只有约 28px，并和主按钮留出空隙，避免误触。
  */
 .cheat-peek {
   position: absolute;
-  top: calc(100% - 2px);
+  top: calc(100% - 10px);
   left: 50%;
   z-index: 1;
-  display: inline-flex;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: max-content;
+  max-width: calc(100vw - 40px);
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  outline: none;
+  transform: translateX(-50%);
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cheat-peek-pill {
+  position: relative;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0;
-  height: 20px;
-  padding: 0 13px;
-  transform: translateX(-50%);
+  gap: 7px;
+  height: 28px;
+  padding: 0 16px;
   border: 1px solid rgba(168, 85, 247, 0.34);
   border-top-color: rgba(168, 85, 247, 0.16);
-  border-radius: 0 0 10px 10px;
-  background: linear-gradient(180deg, rgba(91, 33, 182, 0.5), rgba(30, 27, 75, 0.88));
-  color: rgba(237, 233, 254, 0.66);
-  font-family: inherit;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(180deg, rgba(91, 33, 182, 0.52), rgba(30, 27, 75, 0.9));
+  color: rgba(237, 233, 254, 0.72);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 2px;
   line-height: 1;
   white-space: nowrap;
-  cursor: pointer;
-  opacity: 0.5;
   overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
   box-shadow:
     0 10px 24px -14px rgba(124, 58, 237, 0.9),
     inset 0 4px 8px -6px rgba(0, 0, 0, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
   transition:
-    height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.2s ease,
     color 0.2s ease,
     border-color 0.2s ease,
     background 0.25s ease,
-    box-shadow 0.28s ease;
+    box-shadow 0.25s ease;
 }
 
-/* 抽屉把手：三颗很小的金色抓痕，展开后让位给文字 */
-.cheat-peek-grip {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  max-width: 16px;
-  margin-right: 7px;
-  overflow: hidden;
-  transition:
-    max-width 0.24s cubic-bezier(0.22, 1, 0.36, 1),
-    margin-right 0.24s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.16s ease;
-}
-
-.cheat-peek-grip i {
-  flex: 0 0 auto;
-  width: 3px;
-  height: 3px;
+/* 一颗琥珀色小灯，像把手上的状态指示灯 */
+.cheat-peek-dot {
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: rgba(240, 212, 136, 0.75);
-  box-shadow: 0 0 5px rgba(240, 212, 136, 0.45);
+  background: rgba(240, 212, 136, 0.9);
+  box-shadow: 0 0 6px rgba(240, 212, 136, 0.55);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* 一道很淡的流光，提示这条小边是「可以拉出来的」 */
-.cheat-peek::before {
-  content: '';
+/* 一道很淡的流光：中屏、无 hover 设备上，这是「可以点」的半个提示 */
+.cheat-peek-sheen {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -134,109 +132,75 @@
   100% { transform: translateX(260%); }
 }
 
-.cheat-peek-label {
-  max-width: 0;
-  opacity: 0;
-  overflow: hidden;
-  transform: translateX(-4px);
-  transition:
-    max-width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.18s ease 0.04s,
-    transform 0.28s ease;
+/* 有 hover 的设备：悬停 / 键盘聚焦时变亮、轻微下沉一点，给一点「能按」的反馈 */
+@media (hover: hover) {
+  .cheat-peek:hover .cheat-peek-pill,
+  .cheat-peek:focus-visible .cheat-peek-pill {
+    color: #f5f3ff;
+    border-color: rgba(196, 181, 253, 0.55);
+    border-top-color: rgba(196, 181, 253, 0.25);
+    background: linear-gradient(180deg, rgba(109, 40, 217, 0.72), rgba(30, 27, 75, 0.95));
+    box-shadow:
+      0 16px 34px -14px rgba(124, 58, 237, 0.95),
+      0 0 22px rgba(124, 58, 237, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .cheat-peek:hover .cheat-peek-dot,
+  .cheat-peek:focus-visible .cheat-peek-dot {
+    background: #f0d488;
+    box-shadow: 0 0 9px rgba(240, 212, 136, 0.85);
+  }
 }
 
-.cheat-peek:hover,
-.cheat-peek:focus-visible {
-  height: 36px;
-  opacity: 1;
-  color: #ede9fe;
-  border-color: rgba(196, 181, 253, 0.55);
-  border-top-color: rgba(196, 181, 253, 0.25);
-  background: linear-gradient(180deg, rgba(109, 40, 217, 0.72), rgba(30, 27, 75, 0.95));
-  box-shadow:
-    0 16px 34px -14px rgba(124, 58, 237, 0.95),
-    0 0 22px rgba(124, 58, 237, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  outline: none;
+.cheat-peek:focus-visible .cheat-peek-pill {
+  outline: 2px solid rgba(196, 181, 253, 0.75);
+  outline-offset: 2px;
 }
 
-.cheat-peek:hover .cheat-peek-label,
-.cheat-peek:focus-visible .cheat-peek-label {
-  max-width: 92px;
-  opacity: 1;
-  transform: translateX(0);
+.cheat-peek:active .cheat-peek-pill {
+  transform: translateY(1px);
 }
 
-.cheat-peek:hover .cheat-peek-grip,
-.cheat-peek:focus-visible .cheat-peek-grip {
-  max-width: 0;
-  margin-right: 0;
-  opacity: 0;
-}
-
-.cheat-peek:active {
-  transform: translateX(-50%) translateY(1px);
-}
-
-/* 作弊已开启：绿色版小把手 + 一颗常亮的小圆点 */
-.cheat-peek.enabled {
-  opacity: 0.72;
-  color: rgba(220, 252, 231, 0.82);
+/* 作弊已开启：整颗把手转绿，小灯变绿常亮 */
+.cheat-peek.enabled .cheat-peek-pill {
+  color: rgba(220, 252, 231, 0.88);
   border-color: rgba(74, 222, 128, 0.42);
   border-top-color: rgba(74, 222, 128, 0.18);
-  background: linear-gradient(180deg, rgba(20, 83, 45, 0.62), rgba(6, 78, 59, 0.9));
+  background: linear-gradient(180deg, rgba(20, 83, 45, 0.66), rgba(6, 78, 59, 0.92));
 }
 
-.cheat-peek.enabled::after {
-  content: '';
-  position: absolute;
-  top: 4px;
-  right: 6px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
+.cheat-peek.enabled .cheat-peek-dot {
   background: #4ade80;
   box-shadow: 0 0 8px rgba(74, 222, 128, 0.9);
 }
 
-.cheat-peek.enabled .cheat-peek-grip i {
-  background: rgba(74, 222, 128, 0.85);
-  box-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
-}
-
-.cheat-peek.enabled:hover,
-.cheat-peek.enabled:focus-visible {
-  opacity: 1;
-  background: linear-gradient(180deg, rgba(22, 101, 52, 0.82), rgba(6, 78, 59, 0.96));
-  border-color: rgba(74, 222, 128, 0.62);
-}
-
-/* 触屏没有 hover：默认就把标签露出来，保证一次点得到 */
+/* 无 hover 设备：把提示做明显一点（亮色小灯 + 常亮描边），保证用户知道这里能点 */
 @media (hover: none) {
-  .cheat-peek {
-    height: 32px;
-    opacity: 0.82;
+  .cheat-peek-pill {
+    color: rgba(237, 233, 254, 0.85);
+    border-color: rgba(168, 85, 247, 0.46);
+    border-top-color: rgba(168, 85, 247, 0.22);
   }
 
-  .cheat-peek-grip {
-    display: none;
+  .cheat-peek-dot {
+    animation: cheat-peek-pulse 2.6s ease-in-out infinite;
   }
+}
 
-  .cheat-peek-label {
-    max-width: 92px;
-    opacity: 1;
-    transform: translateX(0);
-  }
+@keyframes cheat-peek-pulse {
+  0%, 100% { box-shadow: 0 0 5px rgba(240, 212, 136, 0.5); }
+  50% { box-shadow: 0 0 10px rgba(240, 212, 136, 0.95); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cheat-peek,
-  .cheat-peek-grip,
-  .cheat-peek-label {
+  .cheat-peek-pill,
+  .cheat-peek-dot {
     transition: none;
   }
 
-  .cheat-peek::before {
+  .cheat-peek-sheen,
+  .cheat-peek-dot {
     animation: none;
   }
 }

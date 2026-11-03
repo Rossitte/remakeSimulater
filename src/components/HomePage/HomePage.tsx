@@ -69,7 +69,7 @@ export default function HomePage({
           开始投胎
         </button>
 
-        {/* 藏在开始按钮后面的小把手：平时只露一条边，hover 才展开；点一次直接进作弊台 */}
+        {/* 从开始按钮下面垂出来的小把手：文字一直可见，点一次直接进作弊台 */}
         <button
           type="button"
           className={`cheat-peek ${cheat.cheatMode ? 'enabled' : ''}`}
@@ -78,14 +78,10 @@ export default function HomePage({
           aria-label="打开作弊控制台"
           aria-haspopup="dialog"
         >
-          {/* 三道小抓痕，像抽屉把手；hover 后换成文字 */}
-          <span className="cheat-peek-grip" aria-hidden>
-            <i />
-            <i />
-            <i />
-          </span>
-          <span className="cheat-peek-label">
+          <span className="cheat-peek-pill">
+            <span className="cheat-peek-dot" aria-hidden />
             {cheat.cheatMode ? '作弊已开启' : '作弊改命'}
+            <span className="cheat-peek-sheen" aria-hidden />
           </span>
         </button>
       </div>
