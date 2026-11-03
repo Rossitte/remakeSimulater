@@ -2,8 +2,7 @@
   text-align: center;
   position: relative;
   padding-top: 40px;
-  /* 为底部悬浮作弊胶囊留出空间，避免遮挡内容 */
-  padding-bottom: 96px;
+  padding-bottom: 24px;
 }
 
 .home-orb {
@@ -33,8 +32,213 @@
   font-size: 15px;
 }
 
+/* ---------- 开始投胎 + 藏在下面的作弊把手 ---------- */
+.start-zone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 52px;
+}
+
 .home-start {
-  margin-bottom: 36px;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 0;
+}
+
+/*
+ * 平时是金色主按钮底下的一条紫色小边（约 20px 高），
+ * 只露一个角；hover / 键盘聚焦后向下展开，露出「作弊改命」。
+ * 点击一次直接打开作弊控制台。
+ */
+.cheat-peek {
+  position: absolute;
+  top: calc(100% - 2px);
+  left: 50%;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  height: 20px;
+  padding: 0 13px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(168, 85, 247, 0.34);
+  border-top-color: rgba(168, 85, 247, 0.16);
+  border-radius: 0 0 10px 10px;
+  background: linear-gradient(180deg, rgba(91, 33, 182, 0.5), rgba(30, 27, 75, 0.88));
+  color: rgba(237, 233, 254, 0.66);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  opacity: 0.5;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    0 10px 24px -14px rgba(124, 58, 237, 0.9),
+    inset 0 4px 8px -6px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition:
+    height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.25s ease,
+    box-shadow 0.28s ease;
+}
+
+/* 抽屉把手：三颗很小的金色抓痕，展开后让位给文字 */
+.cheat-peek-grip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 16px;
+  margin-right: 7px;
+  overflow: hidden;
+  transition:
+    max-width 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    margin-right 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.16s ease;
+}
+
+.cheat-peek-grip i {
+  flex: 0 0 auto;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(240, 212, 136, 0.75);
+  box-shadow: 0 0 5px rgba(240, 212, 136, 0.45);
+}
+
+/* 一道很淡的流光，提示这条小边是「可以拉出来的」 */
+.cheat-peek::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 60%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  transform: translateX(-160%);
+  animation: cheat-peek-sheen 4.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes cheat-peek-sheen {
+  0%, 55% { transform: translateX(-160%); }
+  100% { transform: translateX(260%); }
+}
+
+.cheat-peek-label {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateX(-4px);
+  transition:
+    max-width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.18s ease 0.04s,
+    transform 0.28s ease;
+}
+
+.cheat-peek:hover,
+.cheat-peek:focus-visible {
+  height: 36px;
+  opacity: 1;
+  color: #ede9fe;
+  border-color: rgba(196, 181, 253, 0.55);
+  border-top-color: rgba(196, 181, 253, 0.25);
+  background: linear-gradient(180deg, rgba(109, 40, 217, 0.72), rgba(30, 27, 75, 0.95));
+  box-shadow:
+    0 16px 34px -14px rgba(124, 58, 237, 0.95),
+    0 0 22px rgba(124, 58, 237, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.cheat-peek:hover .cheat-peek-label,
+.cheat-peek:focus-visible .cheat-peek-label {
+  max-width: 92px;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.cheat-peek:hover .cheat-peek-grip,
+.cheat-peek:focus-visible .cheat-peek-grip {
+  max-width: 0;
+  margin-right: 0;
+  opacity: 0;
+}
+
+.cheat-peek:active {
+  transform: translateX(-50%) translateY(1px);
+}
+
+/* 作弊已开启：绿色版小把手 + 一颗常亮的小圆点 */
+.cheat-peek.enabled {
+  opacity: 0.72;
+  color: rgba(220, 252, 231, 0.82);
+  border-color: rgba(74, 222, 128, 0.42);
+  border-top-color: rgba(74, 222, 128, 0.18);
+  background: linear-gradient(180deg, rgba(20, 83, 45, 0.62), rgba(6, 78, 59, 0.9));
+}
+
+.cheat-peek.enabled::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.9);
+}
+
+.cheat-peek.enabled .cheat-peek-grip i {
+  background: rgba(74, 222, 128, 0.85);
+  box-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+}
+
+.cheat-peek.enabled:hover,
+.cheat-peek.enabled:focus-visible {
+  opacity: 1;
+  background: linear-gradient(180deg, rgba(22, 101, 52, 0.82), rgba(6, 78, 59, 0.96));
+  border-color: rgba(74, 222, 128, 0.62);
+}
+
+/* 触屏没有 hover：默认就把标签露出来，保证一次点得到 */
+@media (hover: none) {
+  .cheat-peek {
+    height: 32px;
+    opacity: 0.82;
+  }
+
+  .cheat-peek-grip {
+    display: none;
+  }
+
+  .cheat-peek-label {
+    max-width: 92px;
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cheat-peek,
+  .cheat-peek-grip,
+  .cheat-peek-label {
+    transition: none;
+  }
+
+  .cheat-peek::before {
+    animation: none;
+  }
 }
 
 .home-stats {
@@ -46,108 +250,6 @@
 }
 .home-stats-relative {
   position: relative;
-}
-
-/* ---------- 作弊入口：底部悬浮胶囊 ---------- */
-.cheat-fab-wrap {
-  position: fixed;
-  left: 50%;
-  bottom: 16px;
-  transform: translateX(-50%);
-  z-index: 50;
-}
-.cheat-fab {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  border-radius: 999px;
-  border: 1px solid rgba(212, 178, 94, 0.55);
-  background: linear-gradient(135deg, rgba(30, 27, 75, 0.95), rgba(49, 46, 129, 0.95));
-  color: #f5f3ff;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  cursor: pointer;
-  user-select: none;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-  box-shadow:
-    0 8px 28px -6px rgba(124, 58, 237, 0.6),
-    0 0 0 1px rgba(168, 85, 247, 0.25) inset,
-    0 0 18px rgba(212, 178, 94, 0.25);
-  animation: cheat-fab-glow 2.6s ease-in-out infinite;
-}
-.cheat-fab-icon {
-  font-size: 18px;
-  line-height: 1;
-}
-.cheat-fab:hover {
-  /* 居中交给外层 .cheat-fab-wrap 的 translateX(-50%)，按钮自身只缩放 */
-  transform: scale(1.05);
-  box-shadow:
-    0 12px 36px -6px rgba(124, 58, 237, 0.75),
-    0 0 0 1px rgba(168, 85, 247, 0.4) inset,
-    0 0 26px rgba(212, 178, 94, 0.45);
-}
-@keyframes cheat-fab-glow {
-  0%, 100% {
-    box-shadow:
-      0 8px 28px -6px rgba(124, 58, 237, 0.6),
-      0 0 0 1px rgba(168, 85, 247, 0.25) inset,
-      0 0 18px rgba(212, 178, 94, 0.25);
-  }
-  50% {
-    box-shadow:
-      0 10px 32px -4px rgba(124, 58, 237, 0.8),
-      0 0 0 1px rgba(168, 85, 247, 0.4) inset,
-      0 0 28px rgba(212, 178, 94, 0.5);
-  }
-}
-.cheat-fab.enabled {
-  border-color: rgba(34, 197, 94, 0.6);
-  background: linear-gradient(135deg, rgba(20, 83, 45, 0.95), rgba(6, 78, 59, 0.95));
-  box-shadow:
-    0 8px 28px -6px rgba(34, 197, 94, 0.55),
-    0 0 0 1px rgba(34, 197, 94, 0.4) inset,
-    0 0 18px rgba(34, 197, 94, 0.3);
-  animation: cheat-fab-enabled 2.4s ease-in-out infinite;
-}
-@keyframes cheat-fab-enabled {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.04); }
-}
-
-/* Tooltip「连点 3 次打开作弊控制台」 */
-.cheat-fab-tip {
-  position: absolute;
-  bottom: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  padding: 6px 12px;
-  background: linear-gradient(135deg, #1e1b4b, #312e81);
-  color: #f5f3ff;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px -6px rgba(124, 58, 237, 0.6), 0 0 0 1px rgba(168,85,247,0.35);
-  pointer-events: none;
-  animation: cheat-tip-pop 0.22s ease-out;
-}
-.cheat-fab-tip-arrow {
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
-  width: 12px;
-  height: 12px;
-  background: #312e81;
-  box-shadow: 1px 1px 0 0 rgba(168,85,247,0.35);
-}
-@keyframes cheat-tip-pop {
-  0%   { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.95); }
-  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
 }
 
 /* ---------------- Tabs 切换 ---------------- */
@@ -234,9 +336,6 @@
     font-size: 13px;
     letter-spacing: 2px;
   }
-  .home-start {
-    margin-bottom: 30px;
-  }
   .home-tab {
     padding: 10px 4px;
     font-size: 12.5px;
@@ -256,12 +355,6 @@
   .home-stat-value {
     font-size: 17px;
   }
-  /* Tooltip 在手机上居中，不超出屏幕 */
-  .cheat-fab-tip {
-    white-space: normal;
-    max-width: 80vw;
-    line-height: 1.5;
-  }
 }
 
 @media (max-width: 460px) {
@@ -271,10 +364,6 @@
   .home-title {
     font-size: 28px;
     letter-spacing: 6px;
-  }
-  .cheat-fab {
-    padding: 10px 20px;
-    font-size: 14px;
   }
 }
 

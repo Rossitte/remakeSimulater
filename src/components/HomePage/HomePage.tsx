@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import type { GameStats, AchievementStats, CodexStats } from '../../store/gameStore';
 import CodexWall from '../CodexWall/CodexWall';
 import type { LifeRecord } from '../../models/LifeRecord';
@@ -48,23 +48,6 @@ export default function HomePage({
 }: Props) {
   const [tab, setTab] = useState<Tab>('history');
   const [cheatOpen, setCheatOpen] = useState(false);
-  // hover / 首点 后显示「多点我几次试试？」的小提示
-  const [tipVisible, setTipVisible] = useState(false);
-  const [tipAutoHideTimer, setTipAutoHideTimer] = useState<number | null>(null);
-
-  const showTipBriefly = () => {
-    setTipVisible(true);
-    if (tipAutoHideTimer !== null) window.clearTimeout(tipAutoHideTimer);
-    const t = window.setTimeout(() => setTipVisible(false), 2500);
-    setTipAutoHideTimer(t);
-  };
-
-  // 连点 3 次打开作弊控制台——注意 handler 必须通过 useMemo 稳定化，
-  // 否则每次重渲染都会创建新的 withThreeTap 内部 count（计数就归零了）
-  const handleStatsTap = useMemo(
-    () => withThreeTap(() => setCheatOpen(true)),
-    [],
-  );
 
   return (
     <div className="home fade-up">
@@ -81,9 +64,31 @@ export default function HomePage({
         选择出生。”
       </p>
 
-      <button className="btn-primary home-start" onClick={onStart}>
-        开始投胎
-      </button>
+      <div className="start-zone">
+        <button className="btn-primary home-start" onClick={onStart}>
+          开始投胎
+        </button>
+
+        {/* 藏在开始按钮后面的小把手：平时只露一条边，hover 才展开；点一次直接进作弊台 */}
+        <button
+          type="button"
+          className={`cheat-peek ${cheat.cheatMode ? 'enabled' : ''}`}
+          onClick={() => setCheatOpen(true)}
+          title="打开作弊控制台"
+          aria-label="打开作弊控制台"
+          aria-haspopup="dialog"
+        >
+          {/* 三道小抓痕，像抽屉把手；hover 后换成文字 */}
+          <span className="cheat-peek-grip" aria-hidden>
+            <i />
+            <i />
+            <i />
+          </span>
+          <span className="cheat-peek-label">
+            {cheat.cheatMode ? '作弊已开启' : '作弊改命'}
+          </span>
+        </button>
+      </div>
 
       <CheatConsole
         open={cheatOpen}
@@ -147,31 +152,6 @@ export default function HomePage({
         />
       )}
       {tab === 'codex' && <CodexWall unlocked={unlockedCodex} stats={codexStats} />}
-
-      {/* 作弊入口：底部悬浮胶囊，连点 3 次打开 */}
-      <div className="cheat-fab-wrap">
-        <button
-          className={`cheat-fab ${cheat.cheatMode ? 'enabled' : ''}`}
-          onClick={() => {
-            showTipBriefly();
-            handleStatsTap();
-          }}
-          onMouseEnter={() => setTipVisible(true)}
-          onMouseLeave={() => setTipVisible(false)}
-          aria-label="作弊控制台入口"
-        >
-          <span className="cheat-fab-icon">{cheat.cheatMode ? '🎩' : '🎲'}</span>
-          <span className="cheat-fab-text">
-            {cheat.cheatMode ? '作弊已开启' : '作弊改命'}
-          </span>
-        </button>
-        {tipVisible && (
-          <div className="cheat-fab-tip" role="tooltip">
-            连点 3 次打开作弊控制台
-            <span className="cheat-fab-tip-arrow" />
-          </div>
-        )}
-      </div>
     </div>
   );
 }
@@ -183,20 +163,4 @@ function Stat({ label, value }: { label: string; value: string }) {
       <div className="home-stat-value gold">{value}</div>
     </div>
   );
-}
-
-/** 连点 3 次就触发的「隐秘入口」包装器，2.5 秒内计数归零。 */
-function withThreeTap(fn: () => void) {
-  let count = 0;
-  let timer: number | null = null;
-  return function onClick() {
-    count += 1;
-    if (timer !== null) window.clearTimeout(timer);
-    timer = window.setTimeout(() => { count = 0; timer = null; }, 2500);
-    if (count >= 3) {
-      count = 0;
-      if (timer !== null) { window.clearTimeout(timer); timer = null; }
-      fn();
-    }
-  };
 }
